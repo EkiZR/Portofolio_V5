@@ -245,7 +245,7 @@ If you have any questions or need help with the setup, feel free to reach out\!
 -----
 
 Thanks to
-https://lottiefiles.com/free-animation/coding-NWhbxMOVgP
-Claude
+- https://lottiefiles.com/free-animation/coding-NWhbxMOVgP
+- Claude
 
 ⭐ If this project helped you, please consider giving it a star on GitHub\!
