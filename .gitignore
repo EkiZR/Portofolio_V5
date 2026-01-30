@@ -13,6 +13,8 @@ node_modules
 dist/
 *.dist
 
+.PresenceWidget.jsx
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
