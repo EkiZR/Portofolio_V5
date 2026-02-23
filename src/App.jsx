@@ -1,24 +1,28 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from "react";
+import { HelmetProvider } from "react-helmet-async";
 import "./index.css";
+import Navbar from "./components/Navbar";
 import Home from "./Pages/Home";
 import About from "./Pages/About";
 import AnimatedBackground from "./components/Background";
-import Navbar from "./components/Navbar";
-import Portofolio from "./Pages/Portofolio";
-import ContactPage from "./Pages/Contact";
-import ProjectDetails from "./components/ProjectDetail";
-import WelcomeScreen from "./Pages/WelcomeScreen";
-import { AnimatePresence } from 'framer-motion';
-import notfound from "./Pages/404";
-import NotFoundPage from "./Pages/404";
+import { AnimatePresence } from "framer-motion";
+import Footer from "./components/Footer";
+
+const Portofolio = lazy(() => import("./Pages/Portofolio"));
+const ContactPage = lazy(() => import("./Pages/Contact"));
+const ProjectDetails = lazy(() => import("./components/ProjectDetail"));
+const WelcomeScreen = lazy(() => import("./Pages/WelcomeScreen"));
+const NotFoundPage = lazy(() => import("./Pages/404"));
 
 const LandingPage = ({ showWelcome, setShowWelcome }) => {
   return (
     <>
       <AnimatePresence mode="wait">
         {showWelcome && (
-          <WelcomeScreen onLoadingComplete={() => setShowWelcome(false)} />
+          <Suspense fallback={null}>
+            <WelcomeScreen onLoadingComplete={() => setShowWelcome(false)} />
+          </Suspense>
         )}
       </AnimatePresence>
 
@@ -28,20 +32,11 @@ const LandingPage = ({ showWelcome, setShowWelcome }) => {
           <AnimatedBackground />
           <Home />
           <About />
-          <Portofolio />
-          <ContactPage />
-          <footer>
-            <center>
-              <hr className="my-3 border-gray-400 opacity-15 sm:mx-auto lg:my-6 text-center" />
-              <span className="block text-sm pb-4 text-gray-500 text-center dark:text-gray-400">
-                © 2026{" "}
-                <a href="www.eki.my.id" className="hover:underline">
-                  EkiZR™
-                </a>
-                . All Rights Reserved.
-              </span>
-            </center>
-          </footer>
+          <Suspense fallback={<div className="h-20" />}>
+            <Portofolio />
+            <ContactPage />
+          </Suspense>
+          <Footer />
         </>
       )}
     </>
@@ -50,19 +45,10 @@ const LandingPage = ({ showWelcome, setShowWelcome }) => {
 
 const ProjectPageLayout = () => (
   <>
-    <ProjectDetails />
-    <footer>
-      <center>
-        <hr className="my-3 border-gray-400 opacity-15 sm:mx-auto lg:my-6 text-center" />
-        <span className="block text-sm pb-4 text-gray-500 text-center dark:text-gray-400">
-          © 2026{" "}
-          <a href="www.eki.my.id" className="hover:underline">
-            EkiZR™
-          </a>
-          . All Rights Reserved.
-        </span>
-      </center>
-    </footer>
+    <Suspense fallback={<div className="min-h-screen" />}>
+      <ProjectDetails />
+    </Suspense>
+    <Footer />
   </>
 );
 
@@ -70,13 +56,30 @@ function App() {
   const [showWelcome, setShowWelcome] = useState(true);
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LandingPage showWelcome={showWelcome} setShowWelcome={setShowWelcome} />} />
-        <Route path="/project/:id" element={<ProjectPageLayout />} />
-         <Route path="*" element={<NotFoundPage />} /> {/* Ini route 404 */}
-      </Routes>
-    </BrowserRouter>
+    <HelmetProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <LandingPage
+                showWelcome={showWelcome}
+                setShowWelcome={setShowWelcome}
+              />
+            }
+          />
+          <Route path="/project/:slug" element={<ProjectPageLayout />} />
+          <Route
+            path="*"
+            element={
+              <Suspense fallback={null}>
+                <NotFoundPage />
+              </Suspense>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </HelmetProvider>
   );
 }
 

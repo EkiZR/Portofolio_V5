@@ -1,71 +1,92 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
+  <!-- Basic -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/png" href="Photo.jpg"  />
+  <link rel="icon" type="image/png" href="/Photo.jpg" />
+  <!-- preload Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <!-- Primary Meta Tags -->
-  <title>Eki Zulfar Rachman – Front-End Web Developer</title>
-  <meta name="title" content="Eki Zulfar Rachman – Front-End Web Developer" />
-  <meta name="description" content="Saya Eki Zulfar Rachman, pengembang web front-end yang berfokus pada desain antarmuka modern, responsif, dan performa tinggi. Lihat portofolio dan kontak saya di sini." />
-  <meta name="keywords" content="Eki, Eki Zulfar, Front-End Developer, Web Developer Indonesia, Portofolio Eki, ekizr" />
-  <meta name="google-site-verification" content="ZYNfZwMUiNwSMF3EMvY85bid2BVvB12uMMRfUNWw75A" />
+  <link
+    rel="preload"
+    as="style"
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+    onload="this.onload=null;this.rel='stylesheet'"
+  >
+
+  <noscript>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+    >
+  </noscript>
+  
+  <!-- SEO Utama -->
+  <title>Eki Zulfar Rachman | Front-End Web Developer</title>
+  <meta name="description" content="Website resmi Eki Zulfar Rachman, Front-End Web Developer. Saya berfokus pada penciptaan pengalaman digital yang menarik dan selalu berupaya memberikan solusi terbaik dalam setiap proyek yang saya kerjakan." />
+  <meta name="keywords" content="Eki Zulfar Rachman, Eki ZR, Front-End Web Developer, ekizr, Portofolio Eki" />
+  <meta name="author" content="Eki Zulfar Rachman" />
+
+  <!-- Google Search Console -->
+
+
+  <!-- Theme / PWA -->
+  <meta name="theme-color" content="#030014" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="theme-color" content="#030014" />
-  <meta name="msapplication-navbutton-color" content="#030014" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-  <!-- Open Graph / Facebook -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://eki.my.id/" />
-  <meta property="og:title" content="Eki Zulfar Rachman – Front-End Web Developer" />
-  <meta property="og:description" content="Portofolio Eki Zulfar Rachman – pengembang web dengan fokus pada desain modern dan performa tinggi." />
-  <meta property="og:image" content="https://eki.my.id/Meta.png" />
+  <meta property="og:url" content="https://ekizr.com/" />
+  <meta property="og:title" content="Eki Zulfar Rachman | Front-End Web Developer" />
+  <meta property="og:description" content="Website resmi dan portofolio Eki Zulfar Rachman, Front-End Web Developer." />
+  <meta property="og:image" content="https://ekizr.com/Meta.png" />
 
-  <!-- Twitter Meta Tags -->
+  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:url" content="https://eki.my.id/" />
-  <meta name="twitter:title" content="Eki Zulfar Rachman – Front-End Web Developer" />
-  <meta name="twitter:description" content="Portofolio Eki Zulfar Rachman – pengembang web dengan fokus pada desain modern dan performa tinggi." />
-  <meta name="twitter:image" content="https://eki.my.id/Meta.png" />
+  <meta name="twitter:url" content="https://ekizr.com/" />
+  <meta name="twitter:title" content="Eki Zulfar Rachman | Front-End Web Developer" />
+  <meta name="twitter:description" content="Website resmi dan portofolio Eki Zulfar Rachman." />
+  <meta name="twitter:image" content="https://ekizr.com/Meta.png" />
 
-  <!-- Structured Data JSON-LD -->
+  <!-- Canonical -->
+  <link rel="canonical" href="https://ekizr.com/" />
+
+  <!-- Structured Data: Person -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "ItemList",
-    "itemListElement": [
-      {
-        "@type": "SiteNavigationElement",
-        "name": "Home",
-        "url": "https://www.eki.my.id/#Home"
-      },
-      {
-        "@type": "SiteNavigationElement",
-        "name": "About",
-        "url": "https://www.eki.my.id/#About"
-      },
-      {
-        "@type": "SiteNavigationElement",
-        "name": "Portofolio",
-        "url": "https://www.eki.my.id/#Portofolio"
-      },
-      {
-        "@type": "SiteNavigationElement",
-        "name": "Contact",
-        "url": "https://www.eki.my.id/#Contact"
-      }
+    "@type": "Person",
+    "name": "Eki Zulfar Rachman",
+    "url": "https://ekizr.com",
+    "image": "https://ekizr.com/Photo.jpg",
+    "jobTitle": "Front-End Web Developer",
+    "description": "Saya berfokus pada penciptaan pengalaman digital yang menarik dan selalu berupaya memberikan solusi terbaik dalam setiap proyek yang saya kerjakan.",
+    "sameAs": [
+      "https://www.linkedin.com/in/ekizr/",
+      "https://www.instagram.com/ekizr_/?hl=id",
+     "https://github.com/EkiZR",
+     "https://www.tiktok.com/@eki_zulfar"
     ]
   }
   </script>
 </head>
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  
+<body>
+  <!-- Konten teks penting untuk SEO -->
+  <header style="display:none">
+    <h1>Eki Zulfar Rachman</h1>
+    <p>
+      Saya berfokus pada penciptaan pengalaman digital yang menarik dan selalu berupaya memberikan solusi terbaik dalam setiap proyek yang saya kerjakan.
+    </p>
+  </header>
 
-  </body>
+  <!-- Root React -->
+  <div id="root"></div>
+
+  <script type="module" src="/src/main.jsx"></script>
+</body>
 </html>

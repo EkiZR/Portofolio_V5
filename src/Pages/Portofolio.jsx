@@ -139,8 +139,8 @@ export default function FullWidthTabs() {
     try {
       // Mengambil data dari Supabase secara paralel
       const [projectsResponse, certificatesResponse] = await Promise.all([
-        supabase.from("projects").select("*").order('id', { ascending: true }),
-        supabase.from("certificates").select("*").order('id', { ascending: true }), 
+        supabase.from("projects").select("*").order('id', { ascending: false }),
+        supabase.from("certificates").select("*").order('id', { ascending: false }), 
       ]);
 
       // Error handling untuk setiap request

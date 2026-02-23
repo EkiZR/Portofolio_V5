@@ -186,6 +186,9 @@ const AboutPage = () => {
     <div
       className="h-auto pb-[10%] text-white overflow-hidden px-[5%] sm:px-[5%] lg:px-[10%] mt-10 sm-mt-0" 
       id="About"
+     itemScope
+  itemType="https://schema.org/Person"
+
     >
       <Header />
 
@@ -204,6 +207,7 @@ const AboutPage = () => {
                 className="block mt-2 text-gray-200"
                 data-aos="fade-right"
                 data-aos-duration="1300"
+                itemProp="name"
               >
                 Eki Zulfar Rachman
               </span>
@@ -214,8 +218,9 @@ const AboutPage = () => {
               data-aos="fade-right"
               data-aos-duration="1500"
             >
-             Seorang lulusan Teknik Jaringan Komputer dan Telekomunikasi yang memiliki ketertarikan besar dalam pengembangan Front-End. Saya berfokus pada menciptakan pengalaman digital yang menarik dan selalu berusaha memberikan solusi terbaik dalam setiap proyek yang saya kerjakan.
-            </p>
+        Saya adalah mahasiswa Teknik Informatika yang berfokus pada pengembangan Front-End. 
+Saya berfokus pada penciptaan pengalaman digital yang menarik dan selalu berupaya memberikan solusi terbaik dalam setiap proyek yang saya kerjakan.
+                  </p>
 
                {/* Quote Section */}
       <div 

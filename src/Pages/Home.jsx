@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback, memo } from "react"
+import { Helmet } from "react-helmet-async"
 import { Github, Linkedin, Mail, ExternalLink, Instagram, Sparkles } from "lucide-react"
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 
-// Memoized Components
 const StatusBadge = memo(() => (
   <div className="inline-block animate-float lg:mx-0" data-aos="zoom-in" data-aos-delay="400">
     <div className="relative group">
@@ -72,7 +72,6 @@ const SocialLink = memo(({ icon: Icon, link }) => (
   </a>
 ));
 
-// Constants
 const TYPING_SPEED = 100;
 const ERASING_SPEED = 50;
 const PAUSE_DURATION = 2000;
@@ -92,13 +91,11 @@ const Home = () => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [isHovering, setIsHovering] = useState(false)
 
-  // Optimize AOS initialization
   useEffect(() => {
     const initAOS = () => {
       AOS.init({
         once: true,
         offset: 10,
-       
       });
     };
 
@@ -112,7 +109,6 @@ const Home = () => {
     return () => setIsLoaded(false);
   }, []);
 
-  // Optimize typing effect
   const handleTyping = useCallback(() => {
     if (isTyping) {
       if (charIndex < WORDS[wordIndex].length) {
@@ -141,87 +137,114 @@ const Home = () => {
   }, [handleTyping]);
 
   return (
-    <div className="min-h-screen bg-[#030014] overflow-hidden px-[5%] sm:px-[5%] lg:px-[10%]" id="Home">
-      <div className={`relative z-10 transition-all duration-1000 ${isLoaded ? "opacity-100" : "opacity-0"}`}>
-        <div className="container mx-auto min-h-screen">
-          <div className="flex flex-col lg:flex-row items-center justify-center h-screen md:justify-between gap-0 sm:gap-12 lg:gap-20">
-            {/* Left Column */}
-            <div className="w-full lg:w-1/2 space-y-6 sm:space-y-8 text-left lg:text-left order-1 lg:order-1 lg:mt-0"
-              data-aos="fade-right"
-              data-aos-delay="200">
-              <div className="space-y-4 sm:space-y-6">
-                <StatusBadge />
-                <MainTitle />
+    <>
+      <Helmet>
+        <title>Eki Zulfar Rachman — Frontend Web Developer</title>
+        <meta name="description" content="Website resmi Eki Zulfar Rachman, Front-End Web Developer. Saya berfokus pada penciptaan pengalaman digital yang menarik dan selalu berupaya memberikan solusi terbaik dalam setiap proyek yang saya kerjakan." />
+     <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://ekizr.com" />
+        <meta property="og:title" content="Eki Zulfar Rachman — Frontend Web Developer" />
+     <meta property="og:description" content="Website resmi dan portofolio Eki Zulfar Rachman, Front-End Web Developer." />
+        <meta property="og:url" content="https://ekizr.com" />
+        <meta property="og:type" content="website" />
+        <script type="application/ld+json">{`
+          {
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": "Eki Zulfar Rachman",
+            "jobTitle": "Frontend Developer",
+            "url": "https://ekizr.com",
+            "sameAs": [
+              "https://github.com/EkiZR",
+              "https://www.linkedin.com/in/ekizr/",
+              "https://www.instagram.com/ekizr_/"
+            ]
+          }
+        `}</script>
+      </Helmet>
 
-                {/* Typing Effect */}
-                <div className="h-8 flex items-center" data-aos="fade-up" data-aos-delay="800">
-                  <span className="text-xl md:text-2xl bg-gradient-to-r from-gray-100 to-gray-300 bg-clip-text text-transparent font-light">
-                    {text}
-                  </span>
-                  <span className="w-[3px] h-6 bg-gradient-to-t from-[#6366f1] to-[#a855f7] ml-1 animate-blink"></span>
-                </div>
+      <div className="min-h-screen bg-[#030014] overflow-hidden px-[5%] sm:px-[5%] lg:px-[10%]" id="Home">
+        <div className={`relative z-10 transition-all duration-1000 ${isLoaded ? "opacity-100" : "opacity-0"}`}>
+          <div className="container mx-auto min-h-screen">
+            <div className="flex flex-col lg:flex-row items-center justify-center h-screen md:justify-between gap-0 sm:gap-12 lg:gap-20">
+              {/* Left Column */}
+              <div className="w-full lg:w-1/2 space-y-6 sm:space-y-8 text-left lg:text-left order-1 lg:order-1 lg:mt-0"
+                data-aos="fade-right"
+                data-aos-delay="200">
+                <div className="space-y-4 sm:space-y-6">
+                  <StatusBadge />
+                  <MainTitle />
 
-                {/* Description */}
-                <p className="text-base md:text-lg text-gray-400 max-w-xl leading-relaxed font-light"
-                  data-aos="fade-up"
-                  data-aos-delay="1000">
-                  Menciptakan Website Yang Inovatif, Fungsional, dan User-Friendly untuk Solusi Digital.
-                </p>
+                  {/* Typing Effect */}
+                  <div className="h-8 flex items-center" data-aos="fade-up" data-aos-delay="800">
+                    <span className="text-xl md:text-2xl bg-gradient-to-r from-gray-100 to-gray-300 bg-clip-text text-transparent font-light">
+                      {text}
+                    </span>
+                    <span className="w-[3px] h-6 bg-gradient-to-t from-[#6366f1] to-[#a855f7] ml-1 animate-blink"></span>
+                  </div>
 
-                {/* Tech Stack */}
-                <div className="flex flex-wrap gap-3 justify-start" data-aos="fade-up" data-aos-delay="1200">
-                  {TECH_STACK.map((tech, index) => (
-                    <TechStack key={index} tech={tech} />
-                  ))}
-                </div>
+                  {/* Description */}
+                  <p className="text-base md:text-lg text-gray-400 max-w-xl leading-relaxed font-light"
+                    data-aos="fade-up"
+                    data-aos-delay="1000">
+                    Menciptakan Website Yang Inovatif, Fungsional, dan User-Friendly untuk Solusi Digital.
+                  </p>
 
-                {/* CTA Buttons */}
-                <div className="flex flex-row gap-3 w-full justify-start" data-aos="fade-up" data-aos-delay="1400">
-                  <CTAButton href="#Portofolio" text="Projects" icon={ExternalLink} />
-                  <CTAButton href="#Contact" text="Contact" icon={Mail} />
-                </div>
+                  {/* Tech Stack */}
+                  <div className="flex flex-wrap gap-3 justify-start" data-aos="fade-up" data-aos-delay="1200">
+                    {TECH_STACK.map((tech, index) => (
+                      <TechStack key={index} tech={tech} />
+                    ))}
+                  </div>
 
-                {/* Social Links */}
-                <div className="hidden sm:flex gap-4 justify-start" data-aos="fade-up" data-aos-delay="1600">
-                  {SOCIAL_LINKS.map((social, index) => (
-                    <SocialLink key={index} {...social} />
-                  ))}
+                  {/* CTA Buttons */}
+                  <div className="flex flex-row gap-3 w-full justify-start" data-aos="fade-up" data-aos-delay="1400">
+                    <CTAButton href="#Portofolio" text="Projects" icon={ExternalLink} />
+                    <CTAButton href="#Contact" text="Contact" icon={Mail} />
+                  </div>
+
+                  {/* Social Links */}
+                  <div className="hidden sm:flex gap-4 justify-start" data-aos="fade-up" data-aos-delay="1600">
+                    {SOCIAL_LINKS.map((social, index) => (
+                      <SocialLink key={index} {...social} />
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Right Column - WebM Video */}
-            <div className="w-full py-0 md:py-[10%] sm:py-0 lg:w-1/2 h-[260px] sm:h-[400px] lg:h-[600px] xl:h-[750px] relative flex items-center justify-center order-2 lg:order-2  mt-5 sm:mt-0"
-              onMouseEnter={() => setIsHovering(true)}
-              onMouseLeave={() => setIsHovering(false)}
-              data-aos="fade-left"
-              data-aos-delay="600">
-              <div className="relative w-full opacity-90">
-                <div className={`absolute inset-0 bg-gradient-to-r from-[#6366f1]/10 to-[#a855f7]/10 rounded-3xl blur-3xl transition-all duration-700 ease-in-out ${
-                  isHovering ? "opacity-50 scale-105" : "opacity-20 scale-100"
-                }`}>
-                </div>
-
-                <div className={`relative lg:left-12 z-10 w-full opacity-90 transform transition-transform duration-500 ${
-                  isHovering ? "scale-105" : "scale-100"
-                }`}>
-                  <img
-                    src="Animation1.gif"
-                    alt="Developer Animation"
-                    className={`w-full h-full object-contain transition-all duration-500 ${
-                      isHovering 
-                        ? "scale-[95%] sm:scale-[90%] md:scale-[90%] lg:scale-[90%] rotate-2" 
-                        : "scale-[90%] sm:scale-[80%] md:scale-[80%] lg:scale-[80%]"
-                    }`}
-                  />
-                </div>
-
-                <div className={`absolute inset-0 pointer-events-none transition-all duration-700 ${
-                  isHovering ? "opacity-50" : "opacity-20"
-                }`}>
-                  <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-gradient-to-br from-indigo-500/10 to-purple-500/10 blur-3xl animate-[pulse_6s_cubic-bezier(0.4,0,0.6,1)_infinite] transition-all duration-700 ${
-                    isHovering ? "scale-110" : "scale-100"
+              {/* Right Column - WebM Video */}
+              <div className="w-full py-0 md:py-[10%] sm:py-0 lg:w-1/2 h-[260px] sm:h-[400px] lg:h-[600px] xl:h-[750px] relative flex items-center justify-center order-2 lg:order-2  mt-5 sm:mt-0"
+                onMouseEnter={() => setIsHovering(true)}
+                onMouseLeave={() => setIsHovering(false)}
+                data-aos="fade-left"
+                data-aos-delay="600">
+                <div className="relative w-full opacity-90">
+                  <div className={`absolute inset-0 bg-gradient-to-r from-[#6366f1]/10 to-[#a855f7]/10 rounded-3xl blur-3xl transition-all duration-700 ease-in-out ${
+                    isHovering ? "opacity-50 scale-105" : "opacity-20 scale-100"
                   }`}>
+                  </div>
+
+                  <div className={`relative lg:left-12 z-10 w-full opacity-90 transform transition-transform duration-500 ${
+                    isHovering ? "scale-105" : "scale-100"
+                  }`}>
+                    <img
+                      src="Animation1.gif"
+                      alt="Developer Animation"
+                      className={`w-full h-full object-contain transition-all duration-500 ${
+                        isHovering 
+                          ? "scale-[95%] sm:scale-[90%] md:scale-[90%] lg:scale-[90%] rotate-2" 
+                          : "scale-[90%] sm:scale-[80%] md:scale-[80%] lg:scale-[80%]"
+                      }`}
+                    />
+                  </div>
+
+                  <div className={`absolute inset-0 pointer-events-none transition-all duration-700 ${
+                    isHovering ? "opacity-50" : "opacity-20"
+                  }`}>
+                    <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-gradient-to-br from-indigo-500/10 to-purple-500/10 blur-3xl animate-[pulse_6s_cubic-bezier(0.4,0,0.6,1)_infinite] transition-all duration-700 ${
+                      isHovering ? "scale-110" : "scale-100"
+                    }`}>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -229,8 +252,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-      
-    </div>
+    </>
   );
 };
 
