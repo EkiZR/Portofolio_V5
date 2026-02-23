@@ -61,9 +61,10 @@ const CTAButton = memo(({ href, text, icon: Icon }) => (
   </a>
 ));
 
-const SocialLink = memo(({ icon: Icon, link }) => (
-  <a href={link} target="_blank" rel="noopener noreferrer">
-    <button className="group relative p-3">
+const SocialLink = memo(({ icon: Icon, link, label }) => (
+  <a href={link} target="_blank" rel="noopener noreferrer" aria-label={label}>
+    <button className="group relative p-3"
+      aria-label={label}>
       <div className="absolute inset-0 bg-gradient-to-r from-[#6366f1] to-[#a855f7] rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-300"></div>
       <div className="relative rounded-xl bg-black/50 backdrop-blur-xl p-2 flex items-center justify-center border border-white/10 group-hover:border-white/20 transition-all duration-300">
         <Icon className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
@@ -78,9 +79,9 @@ const PAUSE_DURATION = 2000;
 const WORDS = ["Network & Telecom Student", "Tech Enthusiast"];
 const TECH_STACK = ["React", "Javascript", "Node.js", "Tailwind"];
 const SOCIAL_LINKS = [
-  { icon: Github, link: "https://github.com/EkiZR" },
-  { icon: Linkedin, link: "https://www.linkedin.com/in/ekizr/" },
-  { icon: Instagram, link: "https://www.instagram.com/ekizr._/?hl=id" }
+  { icon: Github, link: "https://github.com/EkiZR", label: "GitHub Profile" },
+  { icon: Linkedin, link: "https://www.linkedin.com/in/ekizr/", label: "LinkedIn Profile" },
+  { icon: Instagram, link: "https://www.instagram.com/ekizr_/?hl=id", label: "Instagram Profile" }
 ];
 
 const Home = () => {
