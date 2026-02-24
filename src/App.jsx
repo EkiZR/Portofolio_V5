@@ -9,6 +9,10 @@ import AnimatedBackground from "./components/Background";
 import { AnimatePresence } from "framer-motion";
 import Footer from "./components/Footer";
 
+import Login from "./Pages/Login";
+import Dashboard from "./Pages/Dashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
+
 const Portofolio = lazy(() => import("./Pages/Portofolio"));
 const ContactPage = lazy(() => import("./Pages/Contact"));
 const ProjectDetails = lazy(() => import("./components/ProjectDetail"));
@@ -29,7 +33,7 @@ const LandingPage = ({ showWelcome, setShowWelcome }) => {
       {!showWelcome && (
         <>
           <Navbar />
-          <AnimatedBackground />
+      
           <Home />
           <About />
           <Suspense fallback={<div className="h-20" />}>
@@ -56,9 +60,14 @@ function App() {
   const [showWelcome, setShowWelcome] = useState(true);
 
   return (
+    
     <HelmetProvider>
+      <div className="pointer-events-none">
+  <AnimatedBackground />
+</div>
       <BrowserRouter>
         <Routes>
+          {/* PUBLIC */}
           <Route
             path="/"
             element={
@@ -68,7 +77,23 @@ function App() {
               />
             }
           />
+
           <Route path="/project/:slug" element={<ProjectPageLayout />} />
+
+          {/* AUTH */}
+          <Route path="/login" element={<Login />} />
+
+          {/* ADMIN (PROTECTED) */}
+          <Route
+            path="/dashboard/*"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* 404 */}
           <Route
             path="*"
             element={

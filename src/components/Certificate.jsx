@@ -66,6 +66,7 @@ const Certificate = ({ ImgSertif }) => {
 							objectFit: "cover",
 							filter: "contrast(1.10) brightness(0.9) saturate(1.1)",
 							transition: "filter 0.3s ease",
+							aspectRatio: "16/11.5",
 						}}
 						onClick={handleOpen}
 					/>
