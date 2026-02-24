@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { supabase } from "../supabase";
 import { useNavigate } from 'react-router-dom'
-import { Mail, Lock, LogIn, Sparkles } from 'lucide-react'
+import { Mail, Lock, LogIn, Sparkles, Eye, EyeOff } from 'lucide-react'
 
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
 
   const handleLogin = async (e) => {
@@ -66,13 +67,24 @@ export default function Login() {
                 <div className="flex items-center bg-white/8 border border-white/15 rounded-xl overflow-hidden focus-within:border-indigo-500/60 transition-colors">
                   <Lock className="w-4 h-4 text-gray-500 ml-4 shrink-0" />
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     required
                     className="w-full bg-transparent px-3 py-3 text-gray-100 placeholder-gray-500 text-sm outline-none"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(prev => !prev)}
+                    className="mr-4 shrink-0 text-gray-500 hover:text-gray-300 transition-colors"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
                 </div>
               </div>
 

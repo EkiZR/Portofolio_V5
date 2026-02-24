@@ -26,6 +26,8 @@
     "add": "^2.0.6",
     "aos": "^2.3.4",
     "axios": "^1.10.0",
+    "baseline-browser-mapping": "^2.10.0",
+    "caniuse-lite": "^1.0.30001774",
     "clsx": "^2.1.1",
     "dialog": "^0.3.1",
     "firebase": "^11.0.1",
