@@ -1,4 +1,4 @@
-import React, { useEffect, memo, useMemo } from "react"
+import React, { useEffect, useState, memo, useMemo } from "react"
 import { FileText, Code, Award, Globe, ArrowUpRight, Sparkles, UserCheck } from "lucide-react"
 import AOS from 'aos'
 import 'aos/dist/aos.css'
@@ -114,21 +114,41 @@ const StatCard = memo(({ icon: Icon, color, value, label, description, animation
 
 const AboutPage = () => {
   // Memoized calculations
-  const { totalProjects, totalCertificates, YearExperience } = useMemo(() => {
-    const storedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
-    const storedCertificates = JSON.parse(localStorage.getItem("certificates") || "[]");
-    
-    const startDate = new Date("2021-11-06");
-    const today = new Date();
-    const experience = today.getFullYear() - startDate.getFullYear() -
-      (today < new Date(today.getFullYear(), startDate.getMonth(), startDate.getDate()) ? 1 : 0);
+  const [stats, setStats] = useState({
+    totalProjects: 0,
+    totalCertificates: 0,
+    YearExperience: 0,
+  });
 
-    return {
-      totalProjects: storedProjects.length,
-      totalCertificates: storedCertificates.length,
-      YearExperience: experience
+  useEffect(() => {
+    const updateStats = () => {
+      const storedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
+      const storedCertificates = JSON.parse(localStorage.getItem("certificates") || "[]");
+      
+      const startDate = new Date("2021-11-06");
+      const today = new Date();
+      const experience = today.getFullYear() - startDate.getFullYear() -
+        (today < new Date(today.getFullYear(), startDate.getMonth(), startDate.getDate()) ? 1 : 0);
+
+      setStats({
+        totalProjects: storedProjects.length,
+        totalCertificates: storedCertificates.length,
+        YearExperience: experience
+      });
+    };
+
+    updateStats();
+
+    window.addEventListener('storage', updateStats);
+    window.addEventListener('portfolioDataUpdated', updateStats);
+
+    return () => {
+      window.removeEventListener('storage', updateStats);
+      window.removeEventListener('portfolioDataUpdated', updateStats);
     };
   }, []);
+
+  const { totalProjects, totalCertificates, YearExperience } = stats;
 
   // Optimized AOS initialization
   useEffect(() => {

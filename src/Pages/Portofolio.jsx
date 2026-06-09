@@ -157,6 +157,9 @@ export default function FullWidthTabs() {
       // Store in localStorage (fungsionalitas ini tetap dipertahankan)
       localStorage.setItem("projects", JSON.stringify(projectData));
       localStorage.setItem("certificates", JSON.stringify(certificateData));
+      
+      // Dispatch custom event to notify other components (like About)
+      window.dispatchEvent(new Event("portfolioDataUpdated"));
     } catch (error) {
       console.error("Error fetching data from Supabase:", error.message);
     }
