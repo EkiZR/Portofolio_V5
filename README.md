@@ -128,6 +128,14 @@ ALTER TABLE public.certificates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.portfolio_comments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
+-- Authenticated users may only read their own profile.
+-- This is required by the login flow to check the user's role.
+CREATE POLICY "User can read own profile"
+ON public.profiles
+FOR SELECT
+TO authenticated
+USING ((SELECT auth.uid()) = id);
+
 CREATE POLICY "public read projects"
 ON public.projects FOR SELECT USING (true);
 
@@ -160,8 +168,15 @@ USING (
 );
 
 CREATE POLICY "admin manage comments"
-ON public.portfolio_comments FOR UPDATE, DELETE
+ON public.portfolio_comments FOR ALL
+TO authenticated
 USING (
+  EXISTS (
+    SELECT 1 FROM public.profiles
+    WHERE id = auth.uid() AND role = 'admin'
+  )
+)
+WITH CHECK (
   EXISTS (
     SELECT 1 FROM public.profiles
     WHERE id = auth.uid() AND role = 'admin'
@@ -206,6 +221,40 @@ WITH CHECK (
 CREATE POLICY "public read certificate images"
 ON storage.objects FOR SELECT
 USING (bucket_id = 'certificate-images');
+
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('profile-images', 'profile-images', true)
+ON CONFLICT DO NOTHING;
+
+CREATE POLICY "public upload profile images"
+ON storage.objects FOR INSERT
+TO public
+WITH CHECK (bucket_id = 'profile-images');
+
+CREATE POLICY "public read profile images"
+ON storage.objects FOR SELECT
+TO public
+USING (bucket_id = 'profile-images');
+
+-- Optional: default pinned comment
+INSERT INTO public.portfolio_comments (
+  content,
+  user_name,
+  profile_image,
+  is_pinned,
+  created_at
+)
+SELECT
+  'Thanks for visiting my portfolio. Made with care by ekizr.',
+  'ekizr',
+  'https://egwzigagwyrmwjsrebzx.supabase.co/storage/v1/object/public/profile-images/profile-images/1771939421615_xx2q8hgya6e.jpeg',
+  true,
+  now()
+WHERE NOT EXISTS (
+  SELECT 1
+  FROM public.portfolio_comments
+  WHERE is_pinned = true
+);
 ```
 
 ### 5. Enable Realtime (Comments)
@@ -264,7 +313,10 @@ Upload the contents of the `dist/` folder to your hosting provider.
 
 - Ensure Node.js is installed and you're in the correct directory.
 - Double-check your `.env` values and restart the dev server after changes.
-- If RLS is blocking requests, verify the `profiles` row exists for your admin user.
+- If RLS is blocking requests, verify the `profiles` row exists for your admin
+  user and the **User can read own profile** policy was created.
+- If profile photo uploads return `Bucket not found`, verify the
+  `profile-images` bucket exists.
 - Clear browser cache if you see stale data.
 
 ---
