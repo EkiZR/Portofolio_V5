@@ -1,86 +1,79 @@
-# Modern Portfolio Website
+# sajidalam.co.uk
 
-A sleek, responsive portfolio website built with React, Vite, and Tailwind CSS. Perfect for showcasing your projects and skills.
+Personal site — [sajidalam.co.uk](https://sajidalam.co.uk)
 
-## Features
+Static, server-rendered at build time, and deliberately close to zero JavaScript:
+the entire site ships **0 KB of framework JS** and one ~15-line inline script for
+the scroll reveal.
 
-- 🌓 Modern, responsive design that works across devices
-- ✨ Animated page transitions and scroll animations
-- 📱 Mobile-friendly interface
-- 🚀 Fast loading with Vite build system
-- 📊 Project showcase with details view
-- 🎨 Certificate gallery
-- 📝 Comments section for visitor feedback
-- 💻 Tech stack display
+## Stack
 
-## Demo
+| | |
+|---|---|
+| Framework | [Astro](https://astro.build) 7 — static output |
+| Styling | Tailwind CSS 4 (CSS-first `@theme` tokens, no `tailwind.config.js`) |
+| Fonts | Inter Variable + JetBrains Mono Variable, self-hosted via Fontsource |
+| Hosting | GitHub Pages, custom domain via `public/CNAME` |
 
-[View Live Demo](https://sajidalam.co.uk/)
+## Commands
 
-## Tech Stack Used
+```bash
+npm install
+npm run dev      # http://localhost:4321
+npm run check    # astro check — type checking
+npm run build    # -> dist/
+npm run preview  # serve the built output
+```
 
-- ReactJS
-- Tailwind CSS
-- AOS (Animate on Scroll)
-- Framer Motion
-- Material UI
-- SweetAlert2
-- LottieFiles
+## Structure
 
-## Setup Instructions
+```
+src/
+  data/site.ts        Single source of truth for all content and metrics
+  layouts/            BaseLayout (SEO + JSON-LD), CaseStudyLayout
+  components/         Header, Footer, Section, WorkCard — all zero-JS .astro
+  pages/
+    index.astro       Hero, selected work, OSS footprint, talks, contact
+    about.astro       Long-form bio, experience, education, publication
+    talks.astro       Speaking and the Kedro Coffee Chat series
+    work/*.astro      Four case studies
+    llms.txt.ts       Plain-text summary generated from src/data/site.ts
+  styles/global.css   Design tokens, fluid type scale, prose, motion policy
+```
 
-1. **Clone this repository:**
+Content lives in `src/data/site.ts`. Editing a metric or a talk there updates the
+page, the `llms.txt` endpoint and the structured data together.
 
-   ```bash
-   git clone https://github.com/Sajid78612/Sajid-web--v2.git
-   ```
+## Conventions worth keeping
 
-2. **Install dependencies:**
+- **Fluid type only.** Every heading size is a `clamp()` that interpolates between
+  320px and 1440px. No `text-3xl md:text-5xl` jumps — that pattern was the cause
+  of the previous version's mobile layout bugs.
+- **Never mask overflow.** `overflow-x: hidden` on `html`/`body` hides the symptom.
+  Wide content scrolls inside its own container, or reflows.
+- **No fixed pixel widths on interactive elements.** Buttons wrap; they don't clip.
+- **Content is never hidden behind JavaScript.** The reveal styles are scoped to
+  `.js`, which is only added by an inline script, so the page is fully readable
+  with JS disabled or broken.
+- **`prefers-reduced-motion` is honoured** for every animation.
 
-   ```bash
-   cd portfolio
-   npm install
-   ```
+## Verifying a change
 
-3. **Start the development server:**
+```bash
+npm run build
+grep -q "Senior Software Engineer at" dist/index.html   # content is server-rendered
+```
 
-   ```bash
-   npm run dev
-   ```
+CI runs both of those plus a check for `CNAME` and `llms.txt`, so a regression to
+client-only rendering fails the build rather than shipping silently.
 
-4. **Build for production:**
+For responsive checks, test at 320 / 360 / 390 / 430 / 768 / 1024 / 1440 and confirm
+`document.documentElement.scrollWidth === innerWidth` at each.
 
-   ```bash
-   npm run build
-   ```
+## Deployment
 
-## Deployment to GitHub Pages
+Pushing to `main` triggers `.github/workflows/deploy.yml`, which type-checks,
+builds, verifies the output, and publishes `dist/` to GitHub Pages.
 
-This project is already configured for GitHub Pages deployment. To deploy:
-
-1. Fork this repository or push to your GitHub account
-2. In `vite.config.js`, update the base path to match your repository name:
-   ```js
-   base: '/your-repo-name/',
-   ```
-3. Push to your `main` branch or manually trigger the GitHub Actions workflow
-4. Your site will be available at `https://yourusername.github.io/your-repo-name/`
-
-## Customization
-
-- Update project data in `src/data/projects.js`
-- Update certificates in `src/data/certificates.js`
-- Replace placeholder images in the `public` folder
-- Edit personal information in component files
-
-## License
-
-This project is open source and available under the MIT License.
-
-## Acknowledgments
-
-Based on the original design by [Eki Zulfar Rachman](https://github.com/EkiZR/Portofolio_V5)
-
----
-
-Modified by Sajid with thanks to Eki for the original design
+The custom domain is pinned by `public/CNAME`, so it survives a Pages settings
+reset rather than living only in repository settings.

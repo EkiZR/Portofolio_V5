@@ -1,0 +1,63 @@
+---
+interface Props {
+  slug: string;
+  index: string;
+  title: string;
+  kicker: string;
+  summary: string;
+  year: string;
+  tags: readonly string[];
+  headline: string;
+}
+
+const { slug, index, title, kicker, summary, year, tags, headline } = Astro.props;
+---
+
+<article class="reveal group rule first:border-t-0">
+  <a
+    href={`/work/${slug}`}
+    class="grid gap-x-8 gap-y-4 py-8 transition-colors sm:grid-cols-[auto_1fr_auto] sm:py-10"
+  >
+    <span
+      class="font-mono text-micro text-faint transition-colors group-hover:text-accent sm:pt-2"
+    >
+      {index}
+    </span>
+
+    <div class="min-w-0">
+      <p class="font-mono text-micro uppercase tracking-[0.14em] text-faint">
+        {kicker}
+      </p>
+
+      <h3
+        class="mt-2 text-h2 text-ink transition-colors group-hover:text-accent"
+      >
+        {title}
+      </h3>
+
+      <p class="mt-3 max-w-prose text-muted">{summary}</p>
+
+      <p class="mt-4 font-mono text-micro text-accent">{headline}</p>
+
+      <ul class="mt-4 flex flex-wrap gap-x-2 gap-y-2">
+        {
+          tags.map((tag) => (
+            <li class="rounded-full border border-hairline px-2.5 py-1 font-mono text-micro text-faint">
+              {tag}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="flex items-start gap-3 sm:flex-col sm:items-end sm:justify-between sm:self-stretch">
+      <span class="font-mono text-micro text-faint">{year}</span>
+      <span
+        aria-hidden="true"
+        class="font-mono text-small text-faint transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-accent"
+      >
+        →
+      </span>
+    </div>
+  </a>
+</article>

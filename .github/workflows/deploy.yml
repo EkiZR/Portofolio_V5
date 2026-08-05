@@ -2,16 +2,15 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# Allow one concurrent deployment; skip runs queued behind a newer one.
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -22,22 +21,39 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: 'npm'
+          node-version: "22"
+          cache: npm
+
       - name: Install dependencies
-        # Use legacy-peer-deps to bypass React version conflicts
-        run: npm install --legacy-peer-deps
+        run: npm ci
+
+      - name: Type check
+        run: npm run check
+
       - name: Build
         run: npm run build
+
+      # Guard against the failure mode this site used to have: a client-rendered
+      # page that served an empty shell to crawlers. If the built HTML does not
+      # contain the tagline, the build is not shipping content.
+      - name: Verify the build is server-rendered
+        run: |
+          grep -q "Senior Software Engineer at" dist/index.html \
+            || { echo "::error::dist/index.html has no rendered prose"; exit 1; }
+          test -f dist/CNAME || { echo "::error::CNAME missing — custom domain would break"; exit 1; }
+          test -f dist/llms.txt || { echo "::error::llms.txt missing"; exit 1; }
+
       - name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v5
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: ./dist
 
   deploy:
     environment:

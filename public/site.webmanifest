@@ -1,0 +1,13 @@
+{
+  "name": "Sajid Alam — Senior Software Engineer",
+  "short_name": "Sajid Alam",
+  "description": "Senior Software Engineer at QuantumBlack, AI by McKinsey. Maintainer of Kedro.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0b",
+  "theme_color": "#0a0a0b",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

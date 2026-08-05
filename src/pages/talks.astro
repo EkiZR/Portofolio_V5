@@ -1,0 +1,118 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Section from '~/components/Section.astro';
+import { talks } from '~/data/site';
+
+/** Episodes of the Coffee Chat series, from the public stream archive. */
+const series = [
+  { title: 'Dataset Validation is coming to Kedro', note: 'Presenting · August 2026' },
+  { title: 'Reflection Hub', note: 'Hosted' },
+  { title: 'All about the Data Catalog', note: 'Hosted' },
+  { title: 'GraphRAG with Kedro', note: 'Presented, with Laura Couto' },
+  { title: 'Kedro in VS Code: From Pipeline View to One-Click Node Debugging', note: 'Hosted' },
+  { title: 'Should AI Write Your Docs? A Team Discussion', note: 'Hosted' },
+  { title: 'Spec-Driven Development for Data Practitioners', note: 'Hosted' },
+  { title: 'Now serving: Exposing Kedro Pipelines over HTTP', note: 'Hosted' },
+  { title: 'Ship GenAI with Confidence: Evaluation Pipelines with Kedro and Langfuse', note: 'Hosted' },
+];
+
+const upcoming = talks.filter((t) => t.status === 'upcoming');
+const past = talks.filter((t) => t.status !== 'upcoming');
+---
+
+<BaseLayout
+  title="Talks & community — Sajid Alam"
+  description="Kedro Coffee Chat host, GOSIM Paris 2026 speaker, and presenter on GraphRAG, dataset validation and Spark tooling."
+>
+  <section class="mx-auto max-w-page px-gutter">
+    <div class="py-16 sm:py-20">
+      <p class="rise font-mono text-micro uppercase tracking-[0.18em] text-accent">
+        Talks &amp; community
+      </p>
+      <h1 class="rise mt-3 max-w-3xl text-h1 text-ink" style="animation-delay:60ms">
+        Speaking, hosting, and running the room
+      </h1>
+      <p class="rise mt-5 max-w-prose text-muted" style="animation-delay:120ms">
+        Maintaining an open-source project is only half engineering. The other half is
+        explaining it — to contributors, to users who have hit something confusing, and to
+        rooms of people deciding whether to adopt it.
+      </p>
+    </div>
+  </section>
+
+  {
+    upcoming.length > 0 && (
+      <Section eyebrow="Next">
+        {upcoming.map((talk) => (
+          <div class="reveal rounded-lg border border-accent-dim bg-accent-dim/10 p-6 sm:p-8">
+            <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <h2 class="text-h2 text-ink">{talk.title}</h2>
+              <span class="font-mono text-micro text-accent">{talk.dateLabel}</span>
+            </div>
+            <p class="mt-2 font-mono text-micro text-faint">{talk.venue}</p>
+            <p class="mt-4 max-w-prose text-muted">{talk.detail}</p>
+            <a
+              href={talk.url}
+              target="_blank"
+              rel="noopener"
+              class="mt-5 inline-block font-mono text-small text-accent underline decoration-accent-dim underline-offset-4 transition-colors hover:decoration-accent"
+            >
+              Kedro streams →
+            </a>
+          </div>
+        ))}
+      </Section>
+    )
+  }
+
+  <Section eyebrow="Selected appearances">
+    <ul class="reveal grid gap-px overflow-hidden rounded-lg border border-hairline bg-hairline">
+      {
+        past.map((talk) => (
+          <li class="bg-canvas p-6 sm:p-8">
+            <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <h2 class="text-h3 text-ink">{talk.title}</h2>
+              <span class="font-mono text-micro text-faint">{talk.dateLabel}</span>
+            </div>
+            <p class="mt-1 font-mono text-micro text-accent">{talk.venue}</p>
+            <p class="mt-3 max-w-prose text-small text-muted">{talk.detail}</p>
+            <a
+              href={talk.url}
+              target="_blank"
+              rel="noopener"
+              class="mt-4 inline-block font-mono text-micro text-faint underline decoration-hairline-hi underline-offset-4 transition-colors hover:text-accent hover:decoration-accent"
+            >
+              Source ↗
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </Section>
+
+  <Section
+    eyebrow="The series"
+    title="Kedro Coffee Chats"
+    lede="A public technical livestream for the Kedro community. I host it — booking speakers, shaping each session and running the broadcast — and present on it when the topic is mine."
+  >
+    <ol class="reveal grid gap-px overflow-hidden rounded-lg border border-hairline bg-hairline sm:grid-cols-2">
+      {
+        series.map((ep) => (
+          <li class="flex flex-col justify-between gap-2 bg-canvas p-5">
+            <span class="text-small text-ink">{ep.title}</span>
+            <span class="font-mono text-micro text-faint">{ep.note}</span>
+          </li>
+        ))
+      }
+    </ol>
+
+    <a
+      href="https://www.youtube.com/@kedro-python/streams"
+      target="_blank"
+      rel="noopener"
+      class="reveal mt-8 inline-block rounded-md border border-hairline-hi px-5 py-2.5 text-small text-ink transition-colors hover:border-accent hover:text-accent"
+    >
+      Watch the archive ↗
+    </a>
+  </Section>
+</BaseLayout>

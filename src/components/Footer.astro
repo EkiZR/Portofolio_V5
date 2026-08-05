@@ -1,0 +1,46 @@
+---
+import { site } from '~/data/site';
+
+const year = new Date().getFullYear();
+
+const links = [
+  { label: 'GitHub', href: site.github },
+  { label: 'LinkedIn', href: site.linkedin },
+  { label: 'Email', href: `mailto:${site.email}` },
+];
+---
+
+<footer class="rule mt-24 sm:mt-32">
+  <div
+    class="mx-auto flex max-w-page flex-col gap-6 px-gutter py-10 sm:flex-row sm:items-center sm:justify-between"
+  >
+    <div>
+      <p class="text-small text-muted">
+        {site.name} — {site.role}, {site.employer}.
+      </p>
+      <p class="mt-1 font-mono text-micro text-faint">
+        © {year} · Built with Astro · <a
+          href="https://github.com/Sajid78612/Sajid-web--v2"
+          class="underline decoration-hairline-hi underline-offset-2 transition-colors hover:decoration-accent hover:text-muted"
+          >Source</a
+        >
+      </p>
+    </div>
+
+    <ul class="flex flex-wrap gap-x-5 gap-y-2">
+      {
+        links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              rel="me noopener"
+              class="text-small text-muted underline decoration-hairline-hi underline-offset-4 transition-colors hover:text-ink hover:decoration-accent"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</footer>

@@ -1,0 +1,28 @@
+---
+interface Props {
+  id?: string;
+  eyebrow: string;
+  title?: string;
+  lede?: string;
+  /** Draw the top hairline. Default on. */
+  rule?: boolean;
+}
+
+const { id, eyebrow, title, lede, rule = true } = Astro.props;
+---
+
+<section id={id} class:list={['mx-auto max-w-page px-gutter', rule && 'rule']}>
+  <div class="py-16 sm:py-20">
+    <div class="reveal">
+      <p class="font-mono text-micro uppercase tracking-[0.18em] text-accent">
+        {eyebrow}
+      </p>
+      {title && <h2 class="mt-3 max-w-3xl text-h1 text-ink">{title}</h2>}
+      {lede && <p class="mt-4 max-w-prose text-muted">{lede}</p>}
+    </div>
+
+    <div class:list={[(title || lede) && 'mt-10 sm:mt-12']}>
+      <slot />
+    </div>
+  </div>
+</section>

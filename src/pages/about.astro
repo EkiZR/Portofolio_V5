@@ -1,0 +1,197 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Section from '~/components/Section.astro';
+import { site, education, publication } from '~/data/site';
+
+const timeline = [
+  {
+    period: 'May 2025 — present',
+    role: 'Senior Software Engineer',
+    org: 'QuantumBlack, AI by McKinsey',
+    detail:
+      'Framework architecture and enhancement proposals. Dataset validation, the Spark and Databricks integrations, LLM observability, and hosting the community stream.',
+  },
+  {
+    period: 'Jan 2024 — May 2025',
+    role: 'Software Engineer II',
+    org: 'QuantumBlack, AI by McKinsey',
+    detail:
+      'Kedro core and Kedro-Viz. Runner internals, the React/Redux visualisation frontend, and the DataCatalog 2.0 migration.',
+  },
+  {
+    period: 'Jan 2022 — Dec 2023',
+    role: 'Software Engineer I',
+    org: 'QuantumBlack, AI by McKinsey',
+    detail:
+      'Micropackaging, the `kedro new` tools flow, Rich logging, Python 3.11 support, and moving the release process onto GitHub Actions.',
+  },
+  {
+    period: 'Sep 2021 — Dec 2021',
+    role: 'Software Engineer Intern',
+    org: 'QuantumBlack, AI by McKinsey',
+    detail: 'First contributions to Kedro; converted to a permanent role.',
+  },
+  {
+    period: 'Aug 2018 — Aug 2019',
+    role: 'Software Engineer Intern',
+    org: 'McAfee',
+    detail:
+      'Data Loss Prevention team. Core functionality for DLP Prevent and Monitor in Perl and C++, plus automated test suites. Mentored a student team to first place in the company coding competition.',
+  },
+];
+---
+
+<BaseLayout
+  title="About — Sajid Alam"
+  description="Senior Software Engineer at QuantumBlack, AI by McKinsey. Kedro maintainer since 2021. MSc Artificial Intelligence, Queen Mary University of London."
+>
+  <section class="mx-auto max-w-page px-gutter">
+    <div class="grid gap-10 py-16 sm:py-20 lg:grid-cols-[1fr_auto] lg:items-start lg:gap-16">
+      <div>
+        <p class="rise font-mono text-micro uppercase tracking-[0.18em] text-accent">About</p>
+        <h1 class="rise mt-3 max-w-2xl text-h1 text-ink" style="animation-delay:60ms">
+          I have spent five years making one framework better
+        </h1>
+        <div class="rise mt-6 max-w-prose space-y-5 text-muted" style="animation-delay:120ms">
+          <p>
+            I am a Senior Software Engineer at <a
+              href={site.employerUrl}
+              target="_blank"
+              rel="noopener"
+              class="text-ink underline decoration-accent-dim underline-offset-4 transition-colors hover:decoration-accent"
+              >QuantumBlack, AI by McKinsey</a
+            >, and a maintainer of <a
+              href="https://kedro.org"
+              target="_blank"
+              rel="noopener"
+              class="text-ink underline decoration-accent-dim underline-offset-4 transition-colors hover:decoration-accent"
+              >Kedro</a
+            > — an open-source Python framework for building reproducible, modular data and machine-learning
+            pipelines.
+          </p>
+          <p>
+            I joined as an intern in 2021, shortly before McKinsey donated Kedro to the Linux
+            Foundation. I did the de-branding sweep across the organisation's repositories for
+            that donation, which is a fairly unglamorous introduction to open source and a very
+            good way to learn a codebase. Kedro has since graduated within LF AI &amp; Data, and I
+            sit on its Technical Steering Committee.
+          </p>
+          <p>
+            Most of my work is framework internals and developer experience: the parts users
+            never look at directly, but feel immediately when they are wrong. I care about
+            APIs that are hard to misuse, migrations that do not strand anyone, and error
+            messages that point at the actual problem. Lately that has extended into the
+            infrastructure around GenAI systems — tracing, evaluation, retrieval — on the
+            argument that agents are the visible part of the problem and the pipeline is the
+            hard part.
+          </p>
+          <p>
+            Before all of this I read Computer Science and then Artificial Intelligence at
+            Queen Mary, where I co-authored a paper on real-time neuroevolution for game
+            playing. Outside work I host the Kedro community's public technical stream.
+          </p>
+        </div>
+      </div>
+
+      <img
+        src="/photo.webp"
+        alt="Sajid Alam"
+        width="280"
+        height="280"
+        loading="eager"
+        decoding="async"
+        class="rise w-40 rounded-lg border border-hairline object-cover sm:w-52 lg:w-64"
+        style="animation-delay:180ms"
+      />
+    </div>
+  </section>
+
+  <Section eyebrow="Experience">
+    <ol class="reveal grid gap-px overflow-hidden rounded-lg border border-hairline bg-hairline">
+      {
+        timeline.map((item) => (
+          <li class="grid gap-2 bg-canvas p-6 sm:grid-cols-[14rem_1fr] sm:gap-8">
+            <span class="font-mono text-micro text-faint sm:pt-1">{item.period}</span>
+            <div class="min-w-0">
+              <h2 class="text-h3 text-ink">{item.role}</h2>
+              <p class="mt-0.5 font-mono text-micro text-accent">{item.org}</p>
+              <p class="mt-2 max-w-prose text-small text-muted">{item.detail}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+
+  <Section eyebrow="Education">
+    <ol class="reveal grid gap-px overflow-hidden rounded-lg border border-hairline bg-hairline sm:grid-cols-2">
+      {
+        education.map((item) => (
+          <li class="bg-canvas p-6">
+            <span class="font-mono text-micro text-faint">{item.period}</span>
+            <h2 class="mt-2 text-h3 text-ink">{item.qualification}</h2>
+            <p class="mt-1 text-small text-muted">{item.institution}</p>
+            <p class="mt-3 font-mono text-micro text-accent">{item.result}</p>
+            <p class="mt-2 text-small text-faint">{item.note}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </Section>
+
+  <Section eyebrow="Publication">
+    <div class="reveal max-w-prose">
+      <h2 class="text-h3 text-ink">{publication.title}</h2>
+      <p class="mt-2 text-small text-muted">{publication.authors}</p>
+      <p class="mt-1 font-mono text-micro text-faint">
+        {publication.venue}, {publication.year}
+      </p>
+      <p class="mt-4 text-small text-muted">{publication.summary}</p>
+      <div class="mt-5 flex flex-wrap gap-x-5 gap-y-2">
+        <a
+          href={publication.arxiv}
+          target="_blank"
+          rel="noopener"
+          class="font-mono text-micro text-accent underline decoration-accent-dim underline-offset-4 transition-colors hover:decoration-accent"
+        >
+          arXiv ↗
+        </a>
+        <a
+          href={publication.doi}
+          target="_blank"
+          rel="noopener"
+          class="font-mono text-micro text-accent underline decoration-accent-dim underline-offset-4 transition-colors hover:decoration-accent"
+        >
+          IEEE Xplore ↗
+        </a>
+      </div>
+    </div>
+  </Section>
+
+  <Section eyebrow="Contact">
+    <div class="reveal flex flex-wrap gap-x-3 gap-y-3">
+      <a
+        href={`mailto:${site.email}`}
+        class="rounded-md bg-accent px-5 py-2.5 text-small font-medium text-canvas transition-colors hover:bg-accent-hi"
+      >
+        {site.email}
+      </a>
+      <a
+        href={site.linkedin}
+        target="_blank"
+        rel="noopener me"
+        class="rounded-md border border-hairline-hi px-5 py-2.5 text-small text-ink transition-colors hover:border-accent hover:text-accent"
+      >
+        LinkedIn
+      </a>
+      <a
+        href={site.github}
+        target="_blank"
+        rel="noopener me"
+        class="rounded-md border border-hairline-hi px-5 py-2.5 text-small text-ink transition-colors hover:border-accent hover:text-accent"
+      >
+        GitHub
+      </a>
+    </div>
+  </Section>
+</BaseLayout>

@@ -1,0 +1,77 @@
+---
+import CaseStudyLayout from '~/layouts/CaseStudyLayout.astro';
+
+const links = [
+  { label: 'PR #1185 · SparkDatasetV2', href: 'https://github.com/kedro-org/kedro-plugins/pull/1185' },
+  { label: 'PR #1460 · Spark Connect for Hive', href: 'https://github.com/kedro-org/kedro-plugins/pull/1460' },
+  { label: 'kedro-datasets on PyPI', href: 'https://pypi.org/project/kedro-datasets/' },
+  { label: 'Kedro Coffee Chats', href: 'https://www.youtube.com/@kedro-python/streams' },
+];
+---
+
+<CaseStudyLayout
+  title="Rewriting Kedro’s Spark dataset"
+  kicker="kedro-plugins #1185"
+  description="SparkDataset is the most load-bearing dataset in the ecosystem and it had accumulated a decade of special cases. I replaced it — without breaking anyone."
+  year="2025"
+  role="Author"
+  stack={['PySpark', 'Databricks', 'Spark Connect', 'Python']}
+  outcome="+1,956 lines, shipped alongside v1"
+  links={links}
+>
+  <p>
+    If you run Kedro on Databricks, you run <code>SparkDataset</code>. It is the piece of the
+    ecosystem with the least room to be wrong and the most accumulated history — years of
+    path-handling special cases for DBFS, Unity Catalog, workspace files and object storage,
+    each added for a good reason, none of them aware of the others.
+  </p>
+
+  <p>
+    Two things forced the issue. Spark Connect decouples the client from the cluster, and the
+    old implementation assumed a local <code>SparkSession</code> it could reach into. And the
+    path logic had reached the point where fixing one environment reliably broke another.
+  </p>
+
+  <h2>Approach</h2>
+
+  <p>
+    A rewrite of a critical dataset is only acceptable if nobody is forced to take it. So
+    <code>SparkDatasetV2</code> ships <em>next to</em> the original rather than replacing it —
+    users opt in, the old class keeps working, and the migration happens on the user's
+    schedule instead of mine.
+  </p>
+
+  <p>The work split into three pieces:</p>
+
+  <ul>
+    <li><strong>The dataset itself</strong> — a clean implementation covering versioned reads and writes, schema loading from an external file, and the full set of Spark formats, at around 380 lines against a 767-line test suite.</li>
+    <li><strong>Shared Spark utilities</strong> — session resolution that understands both a local session and a Spark Connect remote, extracted so other datasets stop reimplementing it.</li>
+    <li><strong>Shared Databricks utilities</strong> — one place that knows how to interpret a path, whether it arrives as DBFS, a workspace path, a Unity Catalog volume or a cloud URI.</li>
+  </ul>
+
+  <p>
+    Pulling the last two out into <code>_utils</code> was the part that mattered most for the
+    long term. The path logic had been duplicated across several datasets with small
+    divergences; now there is a single implementation with tests, and the follow-up work to
+    make <code>SparkHiveDataset.exists()</code> Spark Connect-compatible was a small change
+    rather than another copy of the same code.
+  </p>
+
+  <h2>Why it is more than a port</h2>
+
+  <p>
+    Under Spark Connect the client has no JVM to reach into. A surprising amount of Spark
+    integration code quietly depends on that — anything touching
+    <code>sparkContext</code>, Hadoop configuration or the JVM gateway. Making the dataset
+    work in both worlds meant establishing which capabilities are actually available in each
+    and routing around the gaps, rather than assuming a session and finding out at runtime.
+  </p>
+
+  <h2>Outcome</h2>
+
+  <p>
+    Thirteen files, close to two thousand lines, and no breaking change for existing users.
+    I presented it on a Kedro Coffee Chat — at that point as a speaker rather than the host,
+    which is a role I took on afterwards.
+  </p>
+</CaseStudyLayout>

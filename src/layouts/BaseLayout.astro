@@ -1,0 +1,160 @@
+---
+import '~/styles/global.css';
+import { site } from '~/data/site';
+import Header from '~/components/Header.astro';
+import Footer from '~/components/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Set for case studies so they emit Article structured data. */
+  article?: { publishedYear: string; section: string };
+}
+
+const { title, description, article } = Astro.props;
+
+// Strip the trailing slash on sub-pages, but keep it on the root, so every
+// canonical matches the URL the sitemap emits for the same page.
+const path = Astro.url.pathname;
+const canonical = new URL(path === '/' ? '/' : path.replace(/\/$/, ''), Astro.site).href;
+const ogImage = new URL('/og.png', Astro.site).href;
+const isHome = Astro.url.pathname === '/';
+
+const person = {
+  '@type': 'Person',
+  '@id': `${site.domain}/#person`,
+  name: site.name,
+  url: site.domain,
+  jobTitle: site.role,
+  email: `mailto:${site.email}`,
+  worksFor: { '@type': 'Organization', name: site.employer, url: site.employerUrl },
+  address: { '@type': 'PostalAddress', addressLocality: 'London', addressCountry: 'GB' },
+  alumniOf: { '@type': 'CollegeOrUniversity', name: 'Queen Mary University of London' },
+  knowsAbout: [
+    'Python',
+    'Kedro',
+    'Data engineering',
+    'Apache Spark',
+    'Databricks',
+    'React',
+    'Open source maintenance',
+    'LLM observability',
+  ],
+  sameAs: [site.github, site.linkedin, 'https://github.com/Sajid78612'],
+};
+
+const graph: Record<string, unknown>[] = [
+  person,
+  {
+    '@type': 'WebSite',
+    '@id': `${site.domain}/#website`,
+    url: site.domain,
+    name: `${site.name} — ${site.role}`,
+    description: site.description,
+    publisher: { '@id': `${site.domain}/#person` },
+    inLanguage: 'en-GB',
+  },
+];
+
+if (article) {
+  graph.push({
+    '@type': 'Article',
+    headline: title,
+    description,
+    datePublished: article.publishedYear,
+    articleSection: article.section,
+    author: { '@id': `${site.domain}/#person` },
+    publisher: { '@id': `${site.domain}/#person` },
+    mainEntityOfPage: canonical,
+    isPartOf: { '@id': `${site.domain}/#website` },
+  });
+}
+
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
+---
+
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <meta name="author" content={site.name} />
+    <meta name="theme-color" content="#0a0a0b" />
+    <meta name="color-scheme" content="dark" />
+
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${site.name} — ${site.role}`} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="Plain-text summary for language models" />
+
+    <script type="application/ld+json" is:inline set:html={jsonLd} />
+
+    {/* Marks the document as scripted before first paint, so the reveal styles
+        only apply when there is JavaScript to undo them. */}
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+
+  <body class="min-h-screen antialiased">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded focus:bg-accent focus:px-4 focus:py-2 focus:font-medium focus:text-canvas"
+    >
+      Skip to content
+    </a>
+
+    <Header isHome={isHome} />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <script>
+      // Reveal-on-scroll. ~15 lines of vanilla JS in place of the 14 KB AOS
+      // library the old site loaded — and it respects reduced-motion.
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const targets = document.querySelectorAll<HTMLElement>('.reveal');
+
+      if (reduced || !('IntersectionObserver' in window)) {
+        targets.forEach((el) => el.classList.add('is-visible'));
+      } else {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            });
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.05 },
+        );
+        targets.forEach((el) => observer.observe(el));
+      }
+    </script>
+  </body>
+</html>

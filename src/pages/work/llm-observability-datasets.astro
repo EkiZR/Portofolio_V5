@@ -1,0 +1,92 @@
+---
+import CaseStudyLayout from '~/layouts/CaseStudyLayout.astro';
+
+const links = [
+  { label: 'PR #1208 · LangfuseTraceDataset', href: 'https://github.com/kedro-org/kedro-plugins/pull/1208' },
+  { label: 'PR #1220 · OpikPromptDataset', href: 'https://github.com/kedro-org/kedro-plugins/pull/1220' },
+  { label: 'PR #1455 · VectorStoreHandle', href: 'https://github.com/kedro-org/kedro-plugins/pull/1455' },
+  { label: 'kedro-mcp-rag', href: 'https://github.com/SajidAlamQB/kedro-mcp-rag' },
+];
+---
+
+<CaseStudyLayout
+  title="Observability for LLM pipelines"
+  kicker="Langfuse · Opik · AutoGen · MCP"
+  description="Kedro knew how to write a Parquet file. It did not know how to emit a trace. This is the work that made LLM telemetry a catalog entry like anything else."
+  year="2025–26"
+  role="Author"
+  stack={['Python', 'OpenTelemetry', 'ChromaDB', 'MCP']}
+  outcome="~3,400 lines across two providers"
+  links={links}
+>
+  <p>
+    A Kedro pipeline is a graph of functions connected by a catalog. That model works
+    beautifully for data: declare a dataset, get reproducible I/O. It had nothing to say about
+    the artefacts a GenAI pipeline actually produces — traces, prompts, evaluation runs, the
+    conversational back-and-forth of an agent.
+  </p>
+
+  <p>
+    So teams building LLM applications on Kedro were doing observability out of band: SDK
+    calls scattered through node bodies, credentials threaded through by hand, no way to swap
+    providers without editing code. Exactly the situation Kedro exists to prevent for data.
+  </p>
+
+  <h2>Making telemetry a dataset</h2>
+
+  <p>
+    I built out the dataset families for two observability providers so that tracing, prompts
+    and evaluations are declared in the catalog like everything else — which means credentials
+    come from the credentials file, the provider is swappable by environment, and none of it
+    leaks into node logic.
+  </p>
+
+  <ul>
+    <li><strong>Langfuse</strong> — trace datasets, created from scratch.</li>
+    <li><strong>Opik</strong> — prompt, trace and evaluation datasets, the largest single addition at over 1,700 lines including its own documentation.</li>
+    <li><strong>AutoGen conversation tracing</strong> — capturing multi-agent conversations via OpenTelemetry and routing them to either provider.</li>
+    <li><strong>A shared common layer</strong>, because two providers implemented independently is how you end up with two subtly different definitions of a trace.</li>
+  </ul>
+
+  <h2>The vector-store abstraction</h2>
+
+  <p>
+    The ChromaDB dataset had the same problem one level down. It exposed
+    <code>load_args</code>/<code>save_args</code> — a shape borrowed from tabular datasets that
+    fits a vector store badly, and one that would have to be reinvented for every new backend.
+  </p>
+
+  <p>
+    I replaced it with a handle model: an abstract base for vector-store datasets and a
+    <code>VectorStoreHandle</code> that hands the node a live, configured client rather than
+    pretending a vector database is a file you read and write. Roughly 950 lines added against
+    475 removed, with the test suite growing by 800 lines — a rewrite that made room for the
+    backends that come next.
+  </p>
+
+  <h2>An MCP server that answers questions about Kedro</h2>
+
+  <p>
+    Separately, and mostly because I wanted to see whether the pieces fit: a retrieval-backed
+    MCP server exposing Kedro's documentation to Claude and other MCP clients. A persistent
+    ChromaDB vector store, sentence-transformer embeddings, header-aware chunking of the docs,
+    and a Slack front-end over the same assistant.
+  </p>
+
+  <p>
+    The part I like is where its input comes from. It ingests <code>llms-full.txt</code> — the
+    machine-readable documentation bundle that Kedro generates because I added the plugin
+    that produces it. Upstream contribution first, retrieval layer on top of it second.
+  </p>
+
+  <h2>Why this matters for the framework</h2>
+
+  <p>
+    The argument I have been making, on
+    <a href="/talks">the Coffee Chats</a> and at GOSIM in Paris, is that agents are the visible
+    part of a GenAI system and the smallest part of the work. What decides whether one of
+    these systems survives contact with production is the surrounding pipeline: preparing the
+    data, connecting the steps, making the whole thing repeatable and observable. That is a
+    problem Kedro already solved once, for data. This work is the argument that it transfers.
+  </p>
+</CaseStudyLayout>

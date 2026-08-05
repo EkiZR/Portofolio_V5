@@ -1,0 +1,87 @@
+---
+import CaseStudyLayout from '~/layouts/CaseStudyLayout.astro';
+
+const links = [
+  { label: 'Kedro 1.3.0 release notes', href: 'https://github.com/kedro-org/kedro/releases/tag/1.3.0' },
+  { label: 'PR #5421 · type extractor', href: 'https://github.com/kedro-org/kedro/pull/5421' },
+  { label: 'PR #5422 · parameter validator', href: 'https://github.com/kedro-org/kedro/pull/5422' },
+  { label: 'Documentation', href: 'https://docs.kedro.org/en/stable/configure/parameter_validation/' },
+];
+---
+
+<CaseStudyLayout
+  title="Type-hint parameter validation"
+  kicker="Shipped in Kedro 1.3.0"
+  description="Kedro parameters arrive from YAML as untyped dictionaries. This subsystem reads the type hints already sitting on your node functions and turns them into runtime guarantees — with no impact on anyone who hasn't annotated anything."
+  year="2026"
+  role="Author"
+  stack={['Python', 'Pydantic', 'Type introspection']}
+  outcome="In every Kedro install since 1.3.0"
+  links={links}
+>
+  <p>
+    Parameters in Kedro come out of YAML, which means they arrive as nested dictionaries with
+    no structure and no guarantees. A typo in a config key, a string where a float belongs, a
+    missing nested field — all of it surfaces as an <code>AttributeError</code> or a
+    <code>KeyError</code> partway through a run that may already have written outputs.
+  </p>
+
+  <p>
+    Meanwhile, a lot of people already annotate their node functions. The information needed
+    to catch these mistakes was sitting in the codebase, unused.
+  </p>
+
+  <h2>What it does</h2>
+
+  <p>
+    If a node function's parameter is annotated with a Pydantic model or a dataclass, Kedro
+    builds an instance of that model from the raw config and hands the node a validated,
+    typed object instead of a dictionary. If it is annotated with anything else, or not
+    annotated at all, nothing happens. That last property was non-negotiable — this had to be
+    invisible to every existing project.
+  </p>
+
+  <h2>Delivered as six pull requests</h2>
+
+  <p>
+    The subsystem is roughly 525 lines of source, and I could have opened one pull request
+    for all of it. Nobody reviews that properly. Instead it went in as six, each independently
+    reviewable and each leaving the codebase working:
+  </p>
+
+  <ul>
+    <li><strong>Exceptions and Pydantic utilities</strong> — the error types and the helpers everything else builds on.</li>
+    <li><strong>Model factory</strong> — constructing a validated instance from raw configuration.</li>
+    <li><strong>Type extractor</strong> — reading annotations off node functions and deciding which are usable.</li>
+    <li><strong>Parameter validator</strong> — the component that ties extraction to construction.</li>
+    <li><strong>Context integration</strong> — wiring it into the session so it runs at the right moment.</li>
+    <li><strong>Documentation</strong> — a guide, written as part of the feature rather than after it.</li>
+  </ul>
+
+  <h2>The follow-ups, which is where the real cost was</h2>
+
+  <p>
+    Shipping a type-introspection feature into a framework with a very wide user base means
+    meeting type annotations you did not anticipate.
+  </p>
+
+  <ul>
+    <li><strong>1.3.1</strong> — <code>X | Y</code> union syntax raised an <code>AttributeError</code> during extraction. Unvalidatable types are now skipped rather than crashed on.</li>
+    <li><strong>1.4.0</strong> — extraction was scanning every pipeline in the project, so a dataset annotated differently in two unrelated pipelines produced spurious conflict warnings on runs that touched neither. Scoped it to only the pipelines actually being run.</li>
+    <li><strong>Optional models</strong> — an explicit <code>None</code> was being coerced into an empty model instead of staying <code>None</code>.</li>
+    <li><strong>Namespaced pipelines</strong> — parameter resolution differs under namespacing, and the extractor had to learn that.</li>
+  </ul>
+
+  <p>
+    None of these were visible from the design. All of them came from real projects, and each
+    one is now a test.
+  </p>
+
+  <h2>Outcome</h2>
+
+  <p>
+    Parameter validation shipped in Kedro 1.3.0 in March 2026 — a release I also cut. It is
+    the direct predecessor to <a href="/work/kep-10-dataset-validation">KEP-10</a>: having
+    validated the parameters going into a pipeline, the obvious next question is the data.
+  </p>
+</CaseStudyLayout>

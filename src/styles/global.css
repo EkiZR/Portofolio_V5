@@ -1,0 +1,277 @@
+@import 'tailwindcss';
+
+@import '@fontsource-variable/inter/index.css';
+@import '@fontsource-variable/jetbrains-mono/index.css';
+
+/* ---------------------------------------------------------------------------
+   Design tokens
+
+   Editorial dark: near-black canvas, one accent, real typographic hierarchy.
+   Contrast ratios below are measured against --color-canvas (#0a0a0b).
+   --------------------------------------------------------------------------- */
+@theme {
+  /* Surfaces */
+  --color-canvas: #0a0a0b;
+  --color-surface: #121214;
+  --color-surface-hi: #17171a;
+  --color-hairline: #26262b;
+  --color-hairline-hi: #35353d;
+
+  /* Text — every value below clears WCAG AA on --color-canvas */
+  --color-ink: #ededef; /* 16.9:1 */
+  --color-muted: #a1a1aa; /*  7.7:1 */
+  --color-faint: #85858f; /*  5.4:1 */
+
+  /* Accent — a single warm gold. 10.3:1 on canvas. */
+  --color-accent: #e8b339;
+  --color-accent-hi: #f5c65c;
+  --color-accent-dim: #6b5219;
+
+  /* Type */
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
+
+  /* Fluid type scale.
+     Every step interpolates continuously between 320px and 1440px viewports, so
+     there is no breakpoint at which a heading jumps size or re-wraps awkwardly. */
+  --text-display: clamp(2.25rem, 1.6rem + 3.2vw, 4.5rem);
+  --text-display--line-height: 1.04;
+  --text-display--letter-spacing: -0.03em;
+
+  --text-h1: clamp(2rem, 1.55rem + 2.25vw, 3.25rem);
+  --text-h1--line-height: 1.1;
+  --text-h1--letter-spacing: -0.025em;
+
+  --text-h2: clamp(1.5rem, 1.3rem + 1vw, 2.125rem);
+  --text-h2--line-height: 1.2;
+  --text-h2--letter-spacing: -0.02em;
+
+  --text-h3: clamp(1.125rem, 1.05rem + 0.4vw, 1.375rem);
+  --text-h3--line-height: 1.35;
+  --text-h3--letter-spacing: -0.01em;
+
+  --text-body: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+  --text-body--line-height: 1.7;
+
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.6;
+
+  --text-micro: 0.75rem;
+  --text-micro--line-height: 1.5;
+
+  /* Layout */
+  --spacing-gutter: clamp(1.25rem, 0.9rem + 1.75vw, 2.5rem);
+  --container-prose: 68ch;
+  --container-page: 72rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+   --------------------------------------------------------------------------- */
+@layer base {
+  html {
+    background-color: var(--color-canvas);
+    color-scheme: dark;
+    scroll-behavior: smooth;
+    /* Offset for the sticky header when jumping to an anchor. */
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.7;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Headings never justify and never hyphenate into nonsense; body text is
+     always left-aligned (the old site used text-justify, which produced
+     rivers of whitespace at phone widths). */
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+    font-weight: 560;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Long unbreakable tokens (package names, URLs) must never force the page
+     wider than the viewport. */
+  p,
+  li,
+  dd,
+  dt {
+    overflow-wrap: break-word;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-canvas);
+  }
+
+  /* Kill layout shift from images that lack intrinsic sizing. */
+  img,
+  svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Motion policy — everything decorative, nothing load-bearing.
+   --------------------------------------------------------------------------- */
+@layer utilities {
+  .rise {
+    animation: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Reveal-on-scroll, driven by a tiny IntersectionObserver in BaseLayout.
+     Scoped to .js so that without JavaScript the content is simply visible —
+     never hide content behind a script that might not run. */
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(1rem);
+    transition:
+      opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .js .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  .rule {
+    border-top: 1px solid var(--color-hairline);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .js .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Prose — used by the case-study body copy.
+   --------------------------------------------------------------------------- */
+@layer components {
+  .prose-editorial {
+    max-width: var(--container-prose);
+    color: var(--color-muted);
+  }
+
+  .prose-editorial h2 {
+    margin-block: 3rem 1rem;
+    font-size: var(--text-h2);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+
+  .prose-editorial h3 {
+    margin-block: 2rem 0.75rem;
+    font-size: var(--text-h3);
+    color: var(--color-ink);
+  }
+
+  .prose-editorial p {
+    margin-block: 1.15rem;
+  }
+
+  .prose-editorial ul {
+    margin-block: 1.15rem;
+    padding-left: 1.1rem;
+    list-style: none;
+  }
+
+  .prose-editorial ul > li {
+    position: relative;
+    margin-block: 0.6rem;
+    padding-left: 0.35rem;
+  }
+
+  .prose-editorial ul > li::before {
+    content: '';
+    position: absolute;
+    left: -0.85rem;
+    top: 0.72em;
+    width: 0.3rem;
+    height: 1px;
+    background-color: var(--color-accent);
+  }
+
+  .prose-editorial strong {
+    color: var(--color-ink);
+    font-weight: 560;
+  }
+
+  .prose-editorial code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    color: var(--color-accent);
+    background-color: var(--color-surface-hi);
+    border: 1px solid var(--color-hairline);
+    border-radius: 4px;
+    padding: 0.1em 0.35em;
+  }
+
+  .prose-editorial a:not(.no-underline) {
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent-dim);
+    text-underline-offset: 3px;
+    transition: text-decoration-color 0.2s;
+  }
+
+  .prose-editorial a:not(.no-underline):hover {
+    text-decoration-color: var(--color-accent);
+  }
+}

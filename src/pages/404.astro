@@ -1,0 +1,30 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Not found — Sajid Alam" description="That page does not exist.">
+  <section class="mx-auto max-w-page px-gutter">
+    <div class="flex min-h-[60svh] flex-col justify-center py-20">
+      <p class="font-mono text-micro uppercase tracking-[0.18em] text-accent">404</p>
+      <h1 class="mt-3 text-h1 text-ink">That page does not exist</h1>
+      <p class="mt-4 max-w-prose text-muted">
+        The link may be out of date, or I may have moved something. The work is all still
+        here.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-x-3 gap-y-3">
+        <a
+          href="/"
+          class="rounded-md bg-accent px-5 py-2.5 text-small font-medium text-canvas transition-colors hover:bg-accent-hi"
+        >
+          Home
+        </a>
+        <a
+          href="/#work"
+          class="rounded-md border border-hairline-hi px-5 py-2.5 text-small text-ink transition-colors hover:border-accent hover:text-accent"
+        >
+          Selected work
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

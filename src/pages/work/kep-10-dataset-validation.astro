@@ -1,0 +1,144 @@
+---
+import CaseStudyLayout from '~/layouts/CaseStudyLayout.astro';
+
+const links = [
+  { label: 'KEP-10 · the accepted proposal', href: 'https://github.com/kedro-org/kedro/discussions/5602' },
+  { label: 'KEP-7 · the one I withdrew', href: 'https://github.com/kedro-org/kedro/discussions/5562' },
+  { label: 'PR #5666 · the prototype', href: 'https://github.com/kedro-org/kedro/pull/5666' },
+  { label: 'Runnable demo project', href: 'https://github.com/SajidAlamQB/spaceflights-validation-demo' },
+];
+---
+
+<CaseStudyLayout
+  title="Catalog-native dataset validation"
+  kicker="KEP-10 · Kedro Enhancement Proposal"
+  description="I proposed a way to validate data at Kedro's I/O boundary, took it to the community, was told the design was wrong, agreed, withdrew it, and rewrote it. The second version passed."
+  year="2026"
+  role="Author and shepherd"
+  stack={['Python', 'Pandera', 'PySpark', 'Pydantic']}
+  outcome="Accepted by TSC vote"
+  links={links}
+>
+  <p>
+    Kedro pipelines read and write data through a catalog: a YAML file that maps a dataset
+    name to a type, a path and some options. What the catalog could not do was say anything
+    about what the data is supposed to <em>look</em> like. So a malformed column travels
+    happily through the I/O layer and detonates somewhere in the middle of a node, three
+    steps later, with a traceback pointing at the wrong place entirely.
+  </p>
+
+  <p>
+    Teams had four workarounds and none of them were good: hand-written hooks that nobody
+    could discover, an unmaintained <code>kedro-pandera</code> plugin, function-level
+    decorators that only fire during a pipeline run, or nothing. The gap I cared most about
+    was notebooks — a data scientist loading a dataset interactively got no checks at all.
+  </p>
+
+  <h2>The version I got wrong</h2>
+
+  <p>
+    My first proposal, KEP-7, put schemas on node signatures. You would annotate a node
+    function's arguments with a Pandera schema and the framework would validate against the
+    type hints it found. It reused machinery I had already built for parameter validation,
+    and it demoed well.
+  </p>
+
+  <p>
+    In review, <a href="https://github.com/deepyaman">deepyaman</a> pointed out the flaw. If
+    two pipelines both consume the same dataset and annotate it differently, whichever one
+    the framework resolved last would silently win. No error, no warning — just a schema
+    quietly replaced by another one. He argued that a schema is a property of the dataset,
+    not of any particular function that happens to read it, and therefore belonged on the
+    catalog entry. <a href="https://github.com/noklam">noklam</a> separately asked for a
+    global kill switch and a programmatic API that an IDE could call for diagnostics.
+  </p>
+
+  <p>
+    They were right, and it was not a defect I could patch — the conflict was structural. I
+    closed my own proposal and rewrote it. KEP-10 makes the conflict impossible by
+    construction: one dataset, one validator, declared where the dataset is declared.
+  </p>
+
+  <h2>The design that passed</h2>
+
+  <p>
+    <code>validator:</code> becomes a reserved key on any catalog entry. Shorthand is a
+    dotted path to a schema class; the long form takes options.
+  </p>
+
+  <ul>
+    <li><strong>Enforcement lives in the catalog's <code>load()</code>/<code>save()</code> funnel</strong>, not in a wrapper object around the dataset.</li>
+    <li><strong>Save-side validation runs before the write</strong>, so invalid data never reaches disk.</li>
+    <li><strong>A pluggable <code>Validator</code> protocol</strong> — one method, <code>validate(data) -> data</code>; any raise counts as a failure. Pandera is the reference adapter, at roughly 200 lines.</li>
+    <li><strong>A programmatic API</strong> returning a structured result with a machine-readable error type, so the VS Code extension can render diagnostics instead of guessing.</li>
+  </ul>
+
+  <h2>Why not a wrapper</h2>
+
+  <p>
+    This is the part I changed my mind about publicly, having already announced the opposite.
+    A <code>_ValidatingDataset</code> proxy is the obvious implementation and it is a trap. It
+    breaks <code>isinstance(ds, AbstractVersionedDataset)</code>, which real user code checks.
+    It has to fake internal flags like <code>_EPHEMERAL</code> and
+    <code>_SINGLE_PROCESS</code>, delegate <code>exists()</code> and <code>release()</code>
+    by hand, and survive being pickled by <code>ForkingPickler</code> so that
+    <code>ParallelRunner</code> keeps working. Every one of those is a bug waiting for a user
+    to find it.
+  </p>
+
+  <p>
+    Validating inside the funnel means the dataset stays exactly the object it always was.
+    Nothing downstream can tell the difference.
+  </p>
+
+  <h2>The details that only show up in a real implementation</h2>
+
+  <p>
+    Writing the prototype surfaced a set of problems that no amount of design-doc review
+    would have found.
+  </p>
+
+  <ul>
+    <li><strong>PySpark never raises.</strong> Pandera's PySpark backend does not throw on failure — it accumulates errors onto <code>df.pandera.errors</code>. A naive adapter would have silently passed every invalid Spark DataFrame it was given, which is worse than no validation at all.</li>
+    <li><strong>Pandera moved its namespaces.</strong> The top-level <code>pa.DataFrameModel</code> has been deprecated since 0.30 in favour of <code>pandera.pandas</code>, <code>pandera.polars</code> and <code>pandera.pyspark</code>. The adapter detects which one a schema came from.</li>
+    <li><strong>A protocol check that lied.</strong> <code>isinstance()</code> against a <code>runtime_checkable</code> protocol returns <code>True</code> for any <em>class</em> that merely defines the method — so passing a class where an instance was expected returned the uninstantiated class and silently dropped its options. Found it, fixed it, pinned it with a test.</li>
+    <li><strong>The Norway problem, still with us.</strong> In YAML 1.1 an unquoted <code>on:</code> key parses as boolean <code>true</code>, and it survives the OmegaConf round-trip intact. The config parser normalises it; the demo project exercises it deliberately.</li>
+    <li><strong>Failures are grouped and capped.</strong> A million bad rows should not produce a million lines of traceback, so failures are collected per check with a bounded sample of examples. The full Pandera report is preserved on <code>__cause__</code> for anyone who wants it.</li>
+  </ul>
+
+  <h2>What it cost, and what I could prove</h2>
+
+  <p>
+    Validation sits on a hot path, and "it's probably fine" is not an answer you can put in a
+    proposal. I committed three micro-benchmarks so the performance guidance is evidence
+    rather than assertion, and enumerated twelve risks — hot-path cost, raw-access bypass,
+    coercion silently changing data, hooks observing pre-coercion values, validators lost
+    through environment overlays, degradation under a custom catalog class, thread races —
+    each with a stated mitigation.
+  </p>
+
+  <p>
+    There is also a kill switch, because anything that can reject your data at runtime needs
+    one. A setting plus an environment variable read directly in <code>kedro.io</code> rather
+    than in framework settings, so it still applies to catalogs that plugins rebuild inside
+    hooks and to bare catalogs constructed in a notebook.
+  </p>
+
+  <h2>Where it stands</h2>
+
+  <p>
+    KEP-10 was accepted by Technical Steering Committee vote in June 2026. I ran the technical
+    design session in July, and the implementation is landing as a series of reviewable
+    pull requests against a tracked parent issue. Kedro has eleven enhancement proposals in
+    total; I wrote two of them.
+  </p>
+
+  <p>
+    The demo project is the clearest statement of the point. A supplier feed arrives with a
+    duplicate ID, a malformed rating and an invalid flag. With validation on, the run stops at
+    the I/O boundary and reports all three failed checks at once, before anything is written.
+    With <code>KEDRO_DATASET_VALIDATION=0</code>, you get what Kedro does today: <code
+      >ValueError: could not convert string to float: 'not-a-rating'</code
+    >, raised deep inside a node, nowhere near the actual problem.
+  </p>
+</CaseStudyLayout>

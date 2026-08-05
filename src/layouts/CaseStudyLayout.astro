@@ -1,0 +1,122 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+
+interface Props {
+  title: string;
+  kicker: string;
+  description: string;
+  year: string;
+  role: string;
+  stack: readonly string[];
+  /** Headline outcome, shown in the summary rail. */
+  outcome: string;
+  links: readonly { label: string; href: string }[];
+}
+
+const { title, kicker, description, year, role, stack, outcome, links } = Astro.props;
+---
+
+<BaseLayout
+  title={`${title} — ${kicker} · Sajid Alam`}
+  description={description}
+  article={{ publishedYear: year, section: 'Engineering' }}
+>
+  <article>
+    {/* Header */}
+    <header class="mx-auto max-w-page px-gutter">
+      <div class="py-16 sm:py-20">
+        <a
+          href="/#work"
+          class="font-mono text-micro text-faint transition-colors hover:text-accent"
+        >
+          ← Selected work
+        </a>
+
+        <p class="mt-8 font-mono text-micro uppercase tracking-[0.16em] text-accent">
+          {kicker}
+        </p>
+
+        <h1 class="mt-3 max-w-4xl text-h1 text-ink">{title}</h1>
+
+        <p class="mt-5 max-w-prose text-h3 font-normal text-muted">{description}</p>
+      </div>
+    </header>
+
+    {/* Summary rail */}
+    <div class="mx-auto max-w-page px-gutter">
+      <dl
+        class="rule grid gap-x-8 gap-y-6 border-b border-hairline py-8 sm:grid-cols-2 lg:grid-cols-4"
+      >
+        <div>
+          <dt class="font-mono text-micro uppercase tracking-[0.14em] text-faint">Year</dt>
+          <dd class="mt-2 text-small text-ink">{year}</dd>
+        </div>
+        <div>
+          <dt class="font-mono text-micro uppercase tracking-[0.14em] text-faint">Role</dt>
+          <dd class="mt-2 text-small text-ink">{role}</dd>
+        </div>
+        <div>
+          <dt class="font-mono text-micro uppercase tracking-[0.14em] text-faint">Stack</dt>
+          <dd class="mt-2 text-small text-ink">{stack.join(', ')}</dd>
+        </div>
+        <div>
+          <dt class="font-mono text-micro uppercase tracking-[0.14em] text-faint">Outcome</dt>
+          <dd class="mt-2 text-small text-accent">{outcome}</dd>
+        </div>
+      </dl>
+    </div>
+
+    {/* Body */}
+    <div class="mx-auto max-w-page px-gutter">
+      <div class="prose-editorial py-14 sm:py-16">
+        <slot />
+      </div>
+    </div>
+
+    {/* Links */}
+    {
+      links.length > 0 && (
+        <div class="mx-auto max-w-page px-gutter">
+          <div class="rule py-10">
+            <h2 class="font-mono text-micro uppercase tracking-[0.16em] text-accent">
+              Read the actual work
+            </h2>
+            <ul class="mt-5 grid gap-px overflow-hidden rounded-lg border border-hairline bg-hairline sm:grid-cols-2">
+              {links.map((link) => (
+                <li class="bg-canvas">
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener"
+                    class="group flex items-center justify-between gap-4 p-5 transition-colors hover:bg-surface"
+                  >
+                    <span class="min-w-0 font-mono text-small text-ink transition-colors group-hover:text-accent">
+                      {link.label}
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      class="font-mono text-small text-faint transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-accent"
+                    >
+                      ↗
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )
+    }
+
+    <nav class="mx-auto max-w-page px-gutter" aria-label="Case study">
+      <div class="rule py-10">
+        <a
+          href="/#work"
+          class="font-mono text-small text-accent underline decoration-accent-dim underline-offset-4 transition-colors hover:decoration-accent"
+        >
+          ← All selected work
+        </a>
+      </div>
+    </nav>
+  </article>
+</BaseLayout>

@@ -1,0 +1,317 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Section from '~/components/Section.astro';
+import WorkCard from '~/components/WorkCard.astro';
+import { site, metrics, work, footprint, talks, releases } from '~/data/site';
+
+const upcoming = talks.filter((t) => t.status === 'upcoming');
+const featuredTalks = talks.filter((t) => t.status !== 'upcoming').slice(0, 3);
+---
+
+<BaseLayout
+  title={`${site.name} — Senior Software Engineer & Kedro Maintainer`}
+  description={site.description}
+>
+  {/* ------------------------------------------------------------------ Hero */}
+  <section class="mx-auto max-w-page px-gutter">
+    <div class="flex min-h-[calc(100svh-4rem)] flex-col justify-center py-20 sm:py-24">
+      <p class="rise font-mono text-micro uppercase tracking-[0.18em] text-accent">
+        {site.location}
+      </p>
+
+      <h1 class="rise mt-5 max-w-4xl text-display text-ink" style="animation-delay:60ms">
+        Sajid Alam
+      </h1>
+
+      <p
+        class="rise mt-6 max-w-2xl text-h3 font-normal text-muted"
+        style="animation-delay:120ms"
+      >
+        Senior Software Engineer at <a
+          href={site.employerUrl}
+          target="_blank"
+          rel="noopener"
+          class="text-ink underline decoration-accent-dim underline-offset-4 transition-colors hover:decoration-accent"
+          >QuantumBlack, AI by McKinsey</a
+        >. I maintain <a
+          href="https://kedro.org"
+          target="_blank"
+          rel="noopener"
+          class="text-ink underline decoration-accent-dim underline-offset-4 transition-colors hover:decoration-accent"
+          >Kedro</a
+        > — an open-source Python framework on the Linux Foundation’s LF AI &amp; Data.
+      </p>
+
+      <p class="rise mt-6 max-w-2xl text-muted" style="animation-delay:180ms">
+        Five years on one codebase, in the open. I write the framework internals, the
+        Spark and Databricks integrations, the React tool that draws your pipeline, and
+        the proposals that decide where it all goes next — then I cut the release.
+      </p>
+
+      <div class="rise mt-10 flex flex-wrap items-center gap-x-3 gap-y-3" style="animation-delay:240ms">
+        <a
+          href="#work"
+          class="rounded-md bg-accent px-5 py-2.5 text-small font-medium text-canvas transition-colors hover:bg-accent-hi"
+        >
+          Selected work
+        </a>
+        <a
+          href="/about"
+          class="rounded-md border border-hairline-hi px-5 py-2.5 text-small text-ink transition-colors hover:border-accent hover:text-accent"
+        >
+          About
+        </a>
+        <a
+          href={`mailto:${site.email}`}
+          class="rounded-md px-5 py-2.5 text-small text-muted transition-colors hover:text-ink"
+        >
+          Get in touch
+        </a>
+      </div>
+
+      {/* Proof bar — the numbers, before anyone has to scroll for them. */}
+      <dl
+        class="rise mt-16 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-hairline pt-8 sm:mt-20 lg:grid-cols-4"
+        style="animation-delay:300ms"
+      >
+        {
+          metrics.map((metric) => (
+            <div class="min-w-0">
+              <dt class="sr-only">{metric.label}</dt>
+              <dd>
+                <a
+                  href={metric.source}
+                  target="_blank"
+                  rel="noopener"
+                  class="group block"
+                  title={metric.detail}
+                >
+                  <span class="block font-mono text-h2 tabular-nums text-ink transition-colors group-hover:text-accent">
+                    {metric.value}
+                  </span>
+                  <span class="mt-1 block text-small text-muted">{metric.label}</span>
+                </a>
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  {/* ------------------------------------------------------------------ Work */}
+  <Section
+    id="work"
+    eyebrow="Selected work"
+    title="Four things worth reading about"
+    lede="Each of these is a real, linkable piece of engineering — the proposal, the pull requests, the trade-offs I got wrong the first time, and what shipped."
+  >
+    <div>
+      {work.map((item) => <WorkCard {...item} />)}
+    </div>
+  </Section>
+
+  {/* ------------------------------------------------------- Open-source footprint */}
+  <Section
+    eyebrow="Open source"
+    title="Where five years went"
+    lede="Since October 2021 I have worked almost entirely in public, inside the kedro-org GitHub organisation. This is the breakdown."
+  >
+    {/* Below md the same data renders as stacked cards — a six-row table with a
+        description column cannot be read at 320px without horizontal scrolling. */}
+    <ul class="reveal grid gap-px overflow-hidden rounded-lg border border-hairline bg-hairline md:hidden">
+      {
+        footprint.map((row) => (
+          <li class="bg-canvas p-5">
+            <a
+              href={row.url}
+              target="_blank"
+              rel="noopener"
+              class="font-mono text-small text-ink transition-colors hover:text-accent"
+            >
+              {row.repo}
+            </a>
+            <p class="mt-1 text-small text-ink">{row.what}</p>
+            <p class="mt-2 text-small text-faint">{row.detail}</p>
+            <p class="mt-3 font-mono text-micro text-muted">
+              <span class="tabular-nums text-accent">{row.prs}</span> merged PRs ·
+              <span class="tabular-nums text-accent">{row.commits}</span> commits
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+
+    {/* No `reveal` here: the element is display:none below md, so an observer
+        would never fire for it, and a resize past the breakpoint would leave it
+        permanently transparent. */}
+    <div class="hidden md:block">
+      <table class="w-full border-collapse text-left">
+        <caption class="sr-only">
+          Merged pull requests and commits by repository in the kedro-org organisation
+        </caption>
+        <thead>
+          <tr class="border-b border-hairline">
+            <th scope="col" class="py-3 pr-4 font-mono text-micro font-normal uppercase tracking-[0.14em] text-faint">
+              Repository
+            </th>
+            <th scope="col" class="py-3 pr-4 font-mono text-micro font-normal uppercase tracking-[0.14em] text-faint">
+              What it is
+            </th>
+            <th scope="col" class="py-3 pr-4 text-right font-mono text-micro font-normal uppercase tracking-[0.14em] text-faint">
+              PRs
+            </th>
+            <th scope="col" class="py-3 text-right font-mono text-micro font-normal uppercase tracking-[0.14em] text-faint">
+              Commits
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            footprint.map((row) => (
+              <tr class="group border-b border-hairline/60 align-top">
+                <td class="py-5 pr-4">
+                  <a
+                    href={row.url}
+                    target="_blank"
+                    rel="noopener"
+                    class="font-mono text-small text-ink transition-colors hover:text-accent"
+                  >
+                    {row.repo}
+                  </a>
+                </td>
+                <td class="py-5 pr-4">
+                  <span class="block text-small text-ink">{row.what}</span>
+                  <span class="mt-1 block max-w-md text-small text-faint">{row.detail}</span>
+                </td>
+                <td class="py-5 pr-4 text-right font-mono text-small tabular-nums text-muted">
+                  {row.prs}
+                </td>
+                <td class="py-5 text-right font-mono text-small tabular-nums text-muted">
+                  {row.commits}
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="reveal mt-12 grid gap-8 sm:grid-cols-2">
+      <div class="rounded-lg border border-hairline bg-surface p-6">
+        <h3 class="text-h3 text-ink">Technical Steering Committee</h3>
+        <p class="mt-3 text-small text-muted">
+          Named maintainer on the Kedro TSC — one of nine people with a vote on the
+          direction of a Linux Foundation graduate project.
+        </p>
+        <a
+          href="https://docs.kedro.org/en/stable/about/technical_steering_committee/"
+          target="_blank"
+          rel="noopener"
+          class="mt-4 inline-block font-mono text-micro text-accent underline decoration-accent-dim underline-offset-4 transition-colors hover:decoration-accent"
+        >
+          See the maintainer list →
+        </a>
+      </div>
+
+      <div class="rounded-lg border border-hairline bg-surface p-6">
+        <h3 class="text-h3 text-ink">Releases cut personally</h3>
+        <dl class="mt-3 space-y-2">
+          {
+            releases.map((r) => (
+              <div class="flex flex-wrap items-baseline gap-x-2">
+                <dt class="font-mono text-micro text-faint">{r.project}</dt>
+                <dd class="font-mono text-micro text-muted">{r.versions.join(' · ')}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <p class="mt-4 text-small text-faint">
+          I also moved Kedro’s release process off CircleCI and onto GitHub Actions.
+        </p>
+      </div>
+    </div>
+  </Section>
+
+  {/* ----------------------------------------------------------------- Talks */}
+  <Section
+    eyebrow="Talks & community"
+    title="I host the Kedro Coffee Chats"
+    lede="A public technical livestream for the Kedro community. I took over hosting it — booking speakers, shaping each session, running the broadcast — and I present on it too."
+  >
+    {
+      upcoming.length > 0 && (
+        <div class="reveal mb-10 rounded-lg border border-accent-dim bg-accent-dim/10 p-6">
+          <p class="font-mono text-micro uppercase tracking-[0.14em] text-accent">Next up</p>
+          {upcoming.map((talk) => (
+            <>
+              <h3 class="mt-2 text-h3 text-ink">{talk.title}</h3>
+              <p class="mt-1 font-mono text-micro text-faint">
+                {talk.venue} · {talk.dateLabel}
+              </p>
+              <p class="mt-3 max-w-prose text-small text-muted">{talk.detail}</p>
+            </>
+          ))}
+        </div>
+      )
+    }
+
+    <ul class="reveal grid gap-px overflow-hidden rounded-lg border border-hairline bg-hairline sm:grid-cols-1">
+      {
+        featuredTalks.map((talk) => (
+          <li class="bg-canvas p-6">
+            <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <h3 class="text-h3 text-ink">{talk.title}</h3>
+              <span class="font-mono text-micro text-faint">{talk.dateLabel}</span>
+            </div>
+            <p class="mt-1 font-mono text-micro text-accent">{talk.venue}</p>
+            <p class="mt-3 max-w-prose text-small text-muted">{talk.detail}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <a
+      href="/talks"
+      class="reveal mt-8 inline-block font-mono text-small text-accent underline decoration-accent-dim underline-offset-4 transition-colors hover:decoration-accent"
+    >
+      All talks and streams →
+    </a>
+  </Section>
+
+  {/* --------------------------------------------------------------- Contact */}
+  <Section eyebrow="Contact" title="Open to interesting problems">
+    <div class="reveal max-w-prose">
+      <p class="text-muted">
+        The work I like best sits where research meets production — frameworks, developer
+        tooling, and the unglamorous plumbing that makes data and AI systems reproducible.
+        If that is what you are building, I would like to hear about it.
+      </p>
+
+      <div class="mt-8 flex flex-wrap gap-x-3 gap-y-3">
+        <a
+          href={`mailto:${site.email}`}
+          class="rounded-md bg-accent px-5 py-2.5 text-small font-medium text-canvas transition-colors hover:bg-accent-hi"
+        >
+          {site.email}
+        </a>
+        <a
+          href={site.linkedin}
+          target="_blank"
+          rel="noopener me"
+          class="rounded-md border border-hairline-hi px-5 py-2.5 text-small text-ink transition-colors hover:border-accent hover:text-accent"
+        >
+          LinkedIn
+        </a>
+        <a
+          href={site.github}
+          target="_blank"
+          rel="noopener me"
+          class="rounded-md border border-hairline-hi px-5 py-2.5 text-small text-ink transition-colors hover:border-accent hover:text-accent"
+        >
+          GitHub
+        </a>
+      </div>
+    </div>
+  </Section>
+</BaseLayout>
