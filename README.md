@@ -4,7 +4,7 @@ Hello everyone\! 👋
 
 Let me introduce myself, I'm **Eki Zulfar Rachman**. On this occasion, I'd like to share the portfolio website project that I've developed. built with React and Supabase, featuring a public-facing site and an admin dashboard.
 
-**Live Demo:** [https://ekizr.com](https://ekizr.com)
+**Live Demo:** [https://Fauzi.com](https://Fauzi.com)
 
 ---
 
@@ -42,7 +42,7 @@ This project is built using modern web technologies:
 ### 1. Clone & Install
 
 ```bash
-git clone https://github.com/EkiZR/Portofolio_V5.git
+git clone https://github.com/Zii_kye/Portofolio_V5.git
 cd Portofolio_V5
 npm install
 ```
@@ -311,8 +311,8 @@ Upload the contents of the `dist/` folder to your hosting provider.
 
 ## Credits & Contact
 
-**Eki Zulfar Rachman**  
-Website: [eki.my.id](https://ekizr.com) · GitHub: [EkiZR](https://github.com/EkiZR)
+**Mohammad Fauzi**  
+Website: [Zii.my.id](https://Fauzi.com) · GitHub: [Zii_kye](https://github.com/Zii_kye)
 
 Thanks to [LottieFiles](https://lottiefiles.com/free-animation/coding-NWhbxMOVgP) and Claude.
 
